@@ -10,6 +10,7 @@ require('telescope').setup{
 }
 
 local telescope_builtin = require('telescope.builtin')
+vim.keymap.set('n', "T", ":Telescope<cr>", {desc = "Open telescope"})
 vim.keymap.set('n', "<leader>ff", telescope_builtin.find_files, {desc = "Find files"})
 vim.keymap.set('n', "<leader>sh", telescope_builtin.help_tags, {desc = "Help"})
 vim.keymap.set('n', "<leader>fw", telescope_builtin.grep_string, {desc = "Find word"})

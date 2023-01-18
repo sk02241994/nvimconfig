@@ -46,4 +46,8 @@ return require('packer').startup(function(use)
 		config = function() require('aerial').setup() end
 	}
 	use 'davidgranstrom/nvim-markdown-preview'
+		use {
+				'nvim-lualine/lualine.nvim',
+				requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+		}
 end)

@@ -7,6 +7,9 @@ require('telescope').setup{
 			},
 		},
 	},
+    pickers = {
+        find_files = {hidden = true}
+    },
 }
 
 local telescope_builtin = require('telescope.builtin')

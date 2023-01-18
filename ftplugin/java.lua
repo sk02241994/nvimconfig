@@ -95,7 +95,7 @@ local config = {
 }
 
 config['on_attach'] = function(client, bufnr)
-  require'plugins.configs.lspconfig'.on_attach(client, bufnr)
+  require'lsp-keybind'.on_attach(client, bufnr)
 end
 
 require('jdtls').start_or_attach(config)

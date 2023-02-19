@@ -489,7 +489,7 @@ require("nvim-tree").setup({
 	},
 })
 
-vim.keymap.set('n', '<leader>n', ':NvimTreeToggle<cr>', { silent = true, noremap = true })
+vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<cr>', { silent = true, noremap = true })
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 

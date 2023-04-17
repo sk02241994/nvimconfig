@@ -13,7 +13,10 @@ vim.opt.rtp:prepend(lazypath)
 
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true
+vim.bo.softtabstop = 2
 require("lazy").setup({
   {
     'VonHeikemen/lsp-zero.nvim',
@@ -36,12 +39,16 @@ require("lazy").setup({
       -- Snippets
       {'L3MON4D3/LuaSnip'},             -- Required
       {'rafamadriz/friendly-snippets'}, -- Optional
-      {'j-hui/fidget.nvim'}
     }
   },
   { 'nvim-lualine/lualine.nvim' },
   { 'tpope/vim-sleuth' },
-  { 'nvim-telescope/telescope.nvim', branch = '0.1.x',  dependencies={'nvim-lua/plenary.nvim' } },
+  { 'nvim-telescope/telescope.nvim',
+    dependencies={'nvim-lua/plenary.nvim', "nvim-telescope/telescope-live-grep-args.nvim" },
+    config = function ()
+      require("telescope").load_extension("live_grep_args")
+    end
+  },
   { 'lukas-reineke/indent-blankline.nvim' },
   { 'lewis6991/gitsigns.nvim' },
   {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
@@ -53,11 +60,12 @@ require("lazy").setup({
   {'mfussenegger/nvim-jdtls'},
   {'folke/tokyonight.nvim'},
   {
-		'nvim-tree/nvim-tree.lua',
-		dependencies = {
-			'nvim-tree/nvim-web-devicons', -- optional, for file icons
-		},
-	}
+    'nvim-tree/nvim-tree.lua',
+    dependencies = {
+      'nvim-tree/nvim-web-devicons', -- optional, for file icons
+    },
+  },
+  {'kdheepak/lazygit.nvim'},
 })
 
 -- general configs
@@ -76,9 +84,13 @@ vim.keymap.set('n', '<C-l>', '<C-w>l', {noremap = true})
 vim.keymap.set('n', '<C-k>', '<C-w>k', {noremap = true})
 vim.keymap.set('n', '<C-j>', '<C-w>j', {noremap = true})
 vim.keymap.set('n', '<C-h>', '<C-w>h', {noremap = true})
+vim.keymap.set('n', '<leader>|', "<cmd>vsplit<cr>", { desc = 'Vertical split' })
+vim.keymap.set('n', '<leader>-', "<cmd>split<cr>", { desc = 'Horizontal split' })
+vim.keymap.set('n', '<leader>c', "<cmd>close<cr>", { desc = 'Close buffer' })
+vim.keymap.set('n', '<C-t>', "<cmd>tabnew<cr>", { desc = 'new tab' })
+vim.keymap.set('n', '<tab>', function() vim.cmd.tabnext() end, { desc = 'next tab' })
+vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'previous tab' })
 
--- fidget
-require('fidget').setup()
 -- mason
 require('mason').setup()
 -- lualine
@@ -105,22 +117,25 @@ require('telescope').setup {
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
+vim.keymap.set('n', '<leader>t', "<cmd>Telescope<cr>", { desc = 'Open telescope' })
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
-vim.keymap.set('n', '<leader>/', function()
+vim.keymap.set('n', '<leader>fz', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
     winblend = 10,
     previewer = false,
+    fuzzy = false,
   })
 end, { desc = '[/] Fuzzily search in current buffer]' })
 
 vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
-vim.keymap.set('n', '<leader>fw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>fW', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>fw', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>fg', function() require('telescope').extensions.live_grep_args.live_grep_args() end, { desc = 'Live grep with args' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<C-F12>', ':Telescope lsp_document_symbols<CR>', { desc = '[S]earch [S]ymbols' })
+vim.keymap.set('n', '<leader>gg', "<cmd>LazyGit<cr>", { desc = 'Lazy git' })
 
 -- indent blank line
 require('indent_blankline').setup {
@@ -142,7 +157,7 @@ require('gitsigns').setup {
 -- treesitter
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'help', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'python', 'typescript', 'lua', 'vim', 'java' },
 
   highlight = { enable = true },
   indent = { enable = true, disable = { 'python' } },
@@ -223,7 +238,7 @@ local on_attach = function(_, bufnr)
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
   nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-  nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+  nmap('<leader>fs', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
   -- See `:help K` for why this keymap
@@ -265,12 +280,10 @@ local servers = {
     single_file_support = true
   },
   -- rust_analyzer = {},
-  -- tsserver = {},
   tsserver = {
     filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
     init_options = {hostInfo = "neovim"},
   },
-
   jdtls = {
     filetypes = {"java"},
     single_file_support = true,
@@ -389,80 +402,80 @@ vim.api.nvim_create_autocmd("FileType", {
 
     local config = {
       cmd = {
-	'java',
-	'-Declipse.application=org.eclipse.jdt.ls.core.id1',
-	'-Dosgi.bundles.defaultStartLevel=4',
-	'-Declipse.product=org.eclipse.jdt.ls.core.product',
-	'-Dlog.protocol=true',
-	'-Dlog.level=ALL',
-	'-javaagent:' .. lombok_path,
-	'-Xms1g',
-	'--add-modules=ALL-SYSTEM',
-	'--add-opens', 'java.base/java.util=ALL-UNNAMED',
-	'--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+        'java',
+        '-Declipse.application=org.eclipse.jdt.ls.core.id1',
+        '-Dosgi.bundles.defaultStartLevel=4',
+        '-Declipse.product=org.eclipse.jdt.ls.core.product',
+        '-Dlog.protocol=true',
+        '-Dlog.level=ALL',
+        '-javaagent:' .. lombok_path,
+        '-Xms1g',
+        '--add-modules=ALL-SYSTEM',
+        '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+        '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
 
-	'-jar', path_to_jar,
-	'-configuration', path_to_lsp_server,
-	'-data', workspace_dir,
+        '-jar', path_to_jar,
+        '-configuration', path_to_lsp_server,
+        '-data', workspace_dir,
       },
       root_dir = root_dir,
       settings = {
-	java = {
-	  home = '/home/shubham/Language/java',
-	  eclipse = {
-	    downloadSources = true
-	  },
-	  maven = {
-	    downloadSources = true,
-	  },
-	  implementationsCodeLens = {
-	    enabled = true,
-	  },
-	  referencesCodeLens = {
-	    enabled = true,
-	  },
-	  references = {
-	    includeDecompiledSources = true,
-	  },
-	},
-	signatureHelp = { enabled = true },
-	completion = {
-	  favoriteStaticMembers = {
-	    "org.hamcrest.MatcherAssert.assertThat",
-	    "org.hamcrest.Matchers.*",
-	    "org.hamcrest.CoreMatchers.*",
-	    "org.junit.jupiter.api.Assertions.*",
-	    "java.util.Objects.requireNonNull",
-	    "java.util.Objects.requireNonNullElse",
-	    "org.mockito.Mockito.*",
-	  },
-	  importOrder = {
-	    "java",
-	    "javax",
-	    "com",
-	    "org"
-	  },
-	},
-	extendedClientCapabilities = extendedClientCapabilities,
-	sources = {
-	  organizeImports = {
-	    starThreshold = 9999,
-	    staticStarThreshold = 9999,
-	  },
-	},
-	codeGeneration = {
-	  toString = {
-	    template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
-	  },
-	  useBlocks = true,
-	},
+        java = {
+          home = '/home/shubham/Language/java',
+          eclipse = {
+            downloadSources = true
+          },
+          maven = {
+            downloadSources = true,
+          },
+          implementationsCodeLens = {
+            enabled = true,
+          },
+          referencesCodeLens = {
+            enabled = true,
+          },
+          references = {
+            includeDecompiledSources = true,
+          },
+        },
+        signatureHelp = { enabled = true },
+        completion = {
+          favoriteStaticMembers = {
+            "org.hamcrest.MatcherAssert.assertThat",
+            "org.hamcrest.Matchers.*",
+            "org.hamcrest.CoreMatchers.*",
+            "org.junit.jupiter.api.Assertions.*",
+            "java.util.Objects.requireNonNull",
+            "java.util.Objects.requireNonNullElse",
+            "org.mockito.Mockito.*",
+          },
+          importOrder = {
+            "java",
+            "javax",
+            "com",
+            "org"
+          },
+        },
+        extendedClientCapabilities = extendedClientCapabilities,
+        sources = {
+          organizeImports = {
+            starThreshold = 9999,
+            staticStarThreshold = 9999,
+          },
+        },
+        codeGeneration = {
+          toString = {
+            template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
+          },
+          useBlocks = true,
+        },
 
       },
       flags = {
-	allow_incremental_sync = true,
+        allow_incremental_sync = true,
       },
-init_options = {
-	bundles = {},
+      init_options = {
+        bundles = {},
       },
 
     }
@@ -496,3 +509,225 @@ require("nvim-tree").setup({
   },
 })
 vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<cr>', { silent = true, noremap = true })
+
+-- Eviline config for lualine
+-- Author: shadmansaleh
+-- Credit: glepnir
+local lualine = require('lualine')
+
+-- Color table for highlights
+-- stylua: ignore
+local colors = {
+  bg       = '#202328',
+  fg       = '#bbc2cf',
+  yellow   = '#ECBE7B',
+  cyan     = '#008080',
+  darkblue = '#081633',
+  green    = '#98be65',
+  orange   = '#FF8800',
+  violet   = '#a9a1e1',
+  magenta  = '#c678dd',
+  blue     = '#51afef',
+  red      = '#ec5f67',
+}
+
+local conditions = {
+  buffer_not_empty = function()
+    return vim.fn.empty(vim.fn.expand('%:t')) ~= 1
+  end,
+  hide_in_width = function()
+    return vim.fn.winwidth(0) > 80
+  end,
+  check_git_workspace = function()
+    local filepath = vim.fn.expand('%:p:h')
+    local gitdir = vim.fn.finddir('.git', filepath .. ';')
+    return gitdir and #gitdir > 0 and #gitdir < #filepath
+  end,
+}
+
+-- Config
+local config = {
+  options = {
+    -- Disable sections and component separators
+    component_separators = '',
+    section_separators = '',
+    theme = {
+      -- We are going to use lualine_c an lualine_x as left and
+      -- right section. Both are highlighted by c theme .  So we
+      -- are just setting default looks o statusline
+      normal = { c = { fg = colors.fg, bg = colors.bg } },
+      inactive = { c = { fg = colors.fg, bg = colors.bg } },
+    },
+  },
+  sections = {
+    -- these are to remove the defaults
+    lualine_a = {},
+    lualine_b = {},
+    lualine_y = {},
+    lualine_z = {},
+    -- These will be filled later
+    lualine_c = {},
+    lualine_x = {},
+  },
+  inactive_sections = {
+    -- these are to remove the defaults
+    lualine_a = {},
+    lualine_b = {},
+    lualine_y = {},
+    lualine_z = {},
+    lualine_c = {},
+    lualine_x = {},
+  },
+}
+
+-- Inserts a component in lualine_c at left section
+local function ins_left(component)
+  table.insert(config.sections.lualine_c, component)
+end
+
+-- Inserts a component in lualine_x at right section
+local function ins_right(component)
+  table.insert(config.sections.lualine_x, component)
+end
+
+ins_left {
+  function()
+    return '▊'
+  end,
+  color = { fg = colors.blue }, -- Sets highlighting of component
+  padding = { left = 0, right = 1 }, -- We don't need space before this
+}
+
+ins_left {
+  -- mode component
+  function()
+    return ''
+  end,
+  color = function()
+    -- auto change color according to neovims mode
+    local mode_color = {
+      n = colors.red,
+      i = colors.green,
+      v = colors.blue,
+      [''] = colors.blue,
+      V = colors.blue,
+      c = colors.magenta,
+      no = colors.red,
+      s = colors.orange,
+      S = colors.orange,
+      [''] = colors.orange,
+      ic = colors.yellow,
+      R = colors.violet,
+      Rv = colors.violet,
+      cv = colors.red,
+      ce = colors.red,
+      r = colors.cyan,
+      rm = colors.cyan,
+      ['r?'] = colors.cyan,
+      ['!'] = colors.red,
+      t = colors.red,
+    }
+    return { fg = mode_color[vim.fn.mode()] }
+  end,
+  padding = { right = 1 },
+}
+
+ins_left {
+  -- filesize component
+  'filesize',
+  cond = conditions.buffer_not_empty,
+}
+
+ins_left {
+  'filename',
+  cond = conditions.buffer_not_empty,
+  color = { fg = colors.magenta, gui = 'bold' },
+}
+
+ins_left { 'location' }
+
+ins_left { 'progress', color = { fg = colors.fg, gui = 'bold' } }
+
+ins_left {
+  'diagnostics',
+  sources = { 'nvim_diagnostic' },
+  symbols = { error = ' ', warn = ' ', info = ' ' },
+  diagnostics_color = {
+    color_error = { fg = colors.red },
+    color_warn = { fg = colors.yellow },
+    color_info = { fg = colors.cyan },
+  },
+}
+
+-- Insert mid section. You can make any number of sections in neovim :)
+-- for lualine it's any number greater then 2
+ins_left {
+  function()
+    return '%='
+  end,
+}
+
+ins_left {
+  -- Lsp server name .
+  function()
+    local msg = 'No Active Lsp'
+    local buf_ft = vim.api.nvim_buf_get_option(0, 'filetype')
+    local clients = vim.lsp.get_active_clients()
+    if next(clients) == nil then
+      return msg
+    end
+    for _, client in ipairs(clients) do
+      local filetypes = client.config.filetypes
+      if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
+        return client.name
+      end
+    end
+    return msg
+  end,
+  icon = ' LSP:',
+  color = { fg = '#ffffff', gui = 'bold' },
+}
+
+-- Add components to right sections
+ins_right {
+  'o:encoding', -- option component same as &encoding in viml
+  fmt = string.upper, -- I'm not sure why it's upper case either ;)
+  cond = conditions.hide_in_width,
+  color = { fg = colors.green, gui = 'bold' },
+}
+
+ins_right {
+  'fileformat',
+  fmt = string.upper,
+  icons_enabled = false, -- I think icons are cool but Eviline doesn't have them. sigh
+  color = { fg = colors.green, gui = 'bold' },
+}
+
+ins_right {
+  'branch',
+  icon = '',
+  color = { fg = colors.violet, gui = 'bold' },
+}
+
+ins_right {
+  'diff',
+  -- Is it me or the symbol for modified us really weird
+  symbols = { added = ' ', modified = '柳 ', removed = ' ' },
+  diff_color = {
+    added = { fg = colors.green },
+    modified = { fg = colors.orange },
+    removed = { fg = colors.red },
+  },
+  cond = conditions.hide_in_width,
+}
+
+ins_right {
+  function()
+    return '▊'
+  end,
+  color = { fg = colors.blue },
+  padding = { left = 1 },
+}
+
+-- Now don't forget to initialize lualine
+lualine.setup(config)

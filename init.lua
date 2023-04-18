@@ -54,6 +54,7 @@ vim.o.smartcase = true
 vim.o.updatetime = 250
 vim.wo.signcolumn = 'yes'
 vim.o.termguicolors = true
+vim.o.wrap = false
 vim.o.completeopt = 'menuone,noselect'
 vim.keymap.set('n', '<C-l>', '<C-w>l', {noremap = true})
 vim.keymap.set('n', '<C-k>', '<C-w>k', {noremap = true})

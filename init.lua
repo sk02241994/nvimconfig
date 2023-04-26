@@ -134,7 +134,6 @@ vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { des
 vim.keymap.set('n', '<leader>fw', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>fg', function() require('telescope').extensions.live_grep_args.live_grep_args() end, { desc = 'Live grep with args' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
-vim.keymap.set('n', '<C-F12>', ':Telescope lsp_document_symbols<CR>', { desc = '[S]earch [S]ymbols' })
 vim.keymap.set('n', '<leader>gg', "<cmd>LazyGit<cr>", { desc = 'Lazy git' })
 
 -- indent blank line

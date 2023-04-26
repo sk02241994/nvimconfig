@@ -493,6 +493,7 @@ vim.cmd[[colorscheme tokyonight]]
 --nvim tree
 require("nvim-tree").setup({
   sort_by = "case_sensitive",
+  on_attach = on_attach,
   view = {
     width = 30,
     mappings = {
@@ -731,3 +732,4 @@ ins_right {
 
 -- Now don't forget to initialize lualine
 lualine.setup(config)
+require("luasnip.loaders.from_vscode").lazy_load()

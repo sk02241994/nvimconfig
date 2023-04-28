@@ -17,6 +17,10 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.bo.softtabstop = 2
+vim.opt.colorcolumn="120"
+vim.opt.cursorcolumn=true
+vim.opt.cursorline=true
+
 require("lazy").setup({
   {
     'VonHeikemen/lsp-zero.nvim',

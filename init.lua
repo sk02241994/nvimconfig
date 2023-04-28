@@ -70,6 +70,7 @@ require("lazy").setup({
     },
   },
   {'kdheepak/lazygit.nvim'},
+  {'Mr-LLLLL/interestingwords.nvim'}
 })
 
 -- general configs
@@ -109,6 +110,10 @@ require('lualine').setup {
 -- telescope
 require('telescope').setup {
   defaults = {
+    layout_config = {
+      preview_width = 0.7,
+      vertical = {width = 0.9},
+    },
     mappings = {
       i = {
         ['<C-u>'] = false,
@@ -736,3 +741,13 @@ ins_right {
 -- Now don't forget to initialize lualine
 lualine.setup(config)
 require("luasnip.loaders.from_vscode").lazy_load()
+
+require("interestingwords").setup {
+    colors = { '#aeee00', '#ff0000', '#0000ff', '#b88823', '#ffa724', '#ff2c4b' },
+    search_count = true,
+    navigation = true,
+    search_key = "<leader>m",
+    cancel_search_key = "<leader>M",
+    color_key = "<leader>k",
+    cancel_color_key = "<leader>K",
+}

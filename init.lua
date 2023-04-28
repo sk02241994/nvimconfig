@@ -70,7 +70,8 @@ require("lazy").setup({
     },
   },
   {'kdheepak/lazygit.nvim'},
-  {'Mr-LLLLL/interestingwords.nvim'}
+  {'Mr-LLLLL/interestingwords.nvim'},
+  {'yamatsum/nvim-cursorline'},
 })
 
 -- general configs
@@ -750,4 +751,17 @@ require("interestingwords").setup {
     cancel_search_key = "<leader>M",
     color_key = "<leader>k",
     cancel_color_key = "<leader>K",
+}
+
+require('nvim-cursorline').setup {
+  cursorline = {
+    enable = true,
+    timeout = 1000,
+    number = false,
+  },
+  cursorword = {
+    enable = true,
+    min_length = 3,
+    hl = { underline = true },
+  }
 }

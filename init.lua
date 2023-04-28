@@ -45,6 +45,7 @@ require("lazy").setup({
       dependencies = { 'nvim-tree/nvim-web-devicons' }
     },
     {'kdheepak/lazygit.nvim'},
+    {'Mr-LLLLL/interestingwords.nvim'},
 })
 
 vim.o.hlsearch = true
@@ -72,6 +73,9 @@ vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'p
 
 require('telescope').setup {
   defaults = {
+    layout_config = {
+      preview_width=0.7,
+    },
     mappings = {
       i = {
         ['<C-u>'] = false,
@@ -187,3 +191,13 @@ require'nvim-treesitter.configs'.setup {
 
 if vim.g.neovide then
 end
+
+require("interestingwords").setup {
+  colors = { '#aeee00', '#ff0000', '#0000ff', '#b88823', '#ffa724', '#ff2c4b' },
+  search_count = true,
+  navigation = true,
+  search_key = "<leader>m",
+  cancel_search_key = "<leader>M",
+  color_key = "<leader>k",
+  cancel_color_key = "<leader>K",
+}

@@ -1,4 +1,4 @@
-lcoal M = {}
+local M = {}
 
 M.LazyGit = {
   n = {

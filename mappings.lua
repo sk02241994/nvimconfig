@@ -7,14 +7,12 @@ M.LazyGit = {
 }
 
 M.telescope = {
-  plugin = true,
   n = {
-      ["<leader>fs"] = {"<cmd>Telescope lsp_document_symbols", "Document Symbols"},
+      ["<leader>fs"] = {"<cmd>Telescope lsp_document_symbols<cr>", "Document Symbols"},
   }
 }
 
 M.lspconfig = {
-  plugin = true,
   n = {
       ["gr"] = {"<cmd>Telescope lsp_references<cr>", "Lsp References"},
   }

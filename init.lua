@@ -75,7 +75,7 @@ vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'p
 require('telescope').setup {
   defaults = {
     layout_config = {
-      preview_width=0.7,
+      preview_width=0.5,
     },
     mappings = {
       i = {

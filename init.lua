@@ -96,7 +96,8 @@ vim.keymap.set('n', '<leader>fz', function()
   require('telescope.builtin').current_buffer_fuzzy_find({fuzzy = false})
 end, { desc = 'Fuzzily search in current buffer]' })
 vim.keymap.set('n', '<leader>gg', "<cmd>LazyGit<cr>", { desc = 'Lazy git' })
-
+vim.keymap.set('n', ']q', "<cmd>cn<cr>", { desc = 'Quickfix next' })
+vim.keymap.set('n', '[q', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
 
 -- You don't need to set any of these options.
 -- IMPORTANT!: this is only a showcase of how you can set default options!

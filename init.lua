@@ -274,3 +274,5 @@ cmp.setup.cmdline(':', {
       { name = 'cmdline' }
     })
 })
+
+require("luasnip.loaders.from_vscode").lazy_load()

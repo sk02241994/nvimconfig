@@ -106,8 +106,21 @@ vim.keymap.set('n', '<leader>fz', function()
   require('telescope.builtin').current_buffer_fuzzy_find({fuzzy = false})
 end, { desc = 'Fuzzily search in current buffer]' })
 vim.keymap.set('n', '<leader>gg', "<cmd>LazyGit<cr>", { desc = 'Lazy git' })
-vim.keymap.set('n', ']q', "<cmd>cn<cr>", { desc = 'Quickfix next' })
-vim.keymap.set('n', '[q', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
+vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
+vim.keymap.set('n', '<S-F4>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
+vim.keymap.set('n', '<F2>', function() 
+  local qf_exists = false
+  for _, win in pairs(vim.fn.getwininfo()) do
+    if win['quickfix'] == 1 then
+      qf_exists = true
+    end
+  end
+  if qf_exists then
+    vim.cmd[[cclose]]
+  else
+    vim.cmd[[copen]]
+  end
+end, {desc = "Toggle quickfix"})
 
 -- You don't need to set any of these options.
 -- IMPORTANT!: this is only a showcase of how you can set default options!

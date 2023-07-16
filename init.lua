@@ -30,9 +30,13 @@ vim.keymap.set('n', '<C-w>', "<cmd>close<cr>", { desc = 'Close buffer' })
 vim.keymap.set('n', '<C-t>', "<cmd>tabnew<cr>", { desc = 'new tab' })
 vim.keymap.set('n', '<tab>', function() vim.cmd.tabnext() end, { desc = 'next tab' })
 vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'previous tab' })
+vim.keymap.set('n', '<leader>e', "<cmd>Lexplore<cr>", {desc = 'Explore'})
+vim.keymap.set('n', '<leader>fb', ":buffers<CR>:buffer<Space>", {desc = 'Show buffers'})
+vim.cmd[[set grepprg=rg\ --vimgrep]]
+vim.keymap.set('n', "<leader>fw", ":grep<Space>", {desc = "Find word"})
 
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
-vim.keymap.set('n', '<S-F4>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
+vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
 vim.keymap.set('n', '<F2>', function() 
   local qf_exists = false
   for _, win in pairs(vim.fn.getwininfo()) do

@@ -107,7 +107,7 @@ vim.keymap.set('n', '<leader>fz', function()
 end, { desc = 'Fuzzily search in current buffer]' })
 vim.keymap.set('n', '<leader>gg', "<cmd>LazyGit<cr>", { desc = 'Lazy git' })
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
-vim.keymap.set('n', '<S-F4>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
+vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
 vim.keymap.set('n', '<F2>', function() 
   local qf_exists = false
   for _, win in pairs(vim.fn.getwininfo()) do

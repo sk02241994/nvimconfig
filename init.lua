@@ -34,6 +34,7 @@ vim.keymap.set('n', '<leader>e', "<cmd>Lexplore<cr>", {desc = 'Explore'})
 vim.keymap.set('n', '<leader>fb', ":buffers<CR>:buffer<Space>", {desc = 'Show buffers'})
 vim.cmd[[set grepprg=rg\ --vimgrep]]
 vim.keymap.set('n', "<leader>fw", ":grep<Space>", {desc = "Find word"})
+vim.keymap.set('n', "<leader>ff", ":e<Space>", {desc = "Find file"})
 
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
 vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })

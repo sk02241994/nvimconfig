@@ -276,6 +276,10 @@ cmp.setup {
     },
     { name = 'luasnip' },
   },
+  completion = {
+    autocomplete = false,
+		completeopt = "menu,menuone,noselect",
+  },
 }
 
 cmp.setup.cmdline({ '/', '?' }, {

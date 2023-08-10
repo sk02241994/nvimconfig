@@ -96,6 +96,7 @@ vim.keymap.set('n', '<leader>c', "<cmd>close<cr>", { desc = 'Close buffer' })
 vim.keymap.set('n', '<C-t>', "<cmd>tabnew<cr>", { desc = 'new tab' })
 vim.keymap.set('n', '<tab>', function() vim.cmd.tabnext() end, { desc = 'next tab' })
 vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'previous tab' })
+vim.keymap.set('n', '<C-w>', "<cmd>close<cr>", { desc = 'Close buffer' })
 
 -- mason
 require('mason').setup()
@@ -145,6 +146,21 @@ vim.keymap.set('n', '<leader>fw', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>fg', function() require('telescope').extensions.live_grep_args.live_grep_args() end, { desc = 'Live grep with args' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>gg', "<cmd>LazyGit<cr>", { desc = 'Lazy git' })
+vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
+vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
+vim.keymap.set('n', '<F2>', function()
+  local qf_exists = false
+  for _, win in pairs(vim.fn.getwininfo()) do
+    if win['quickfix'] == 1 then
+      qf_exists = true
+    end
+  end
+  if qf_exists then
+    vim.cmd[[cclose]]
+  else
+    vim.cmd[[copen]]
+  end
+end, {desc = "Toggle quickfix"})
 
 -- indent blank line
 require('indent_blankline').setup {

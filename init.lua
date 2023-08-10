@@ -70,6 +70,7 @@ require("lazy").setup({
     },
   },
   {'kdheepak/lazygit.nvim'},
+  {'Mr-LLLLL/interestingwords.nvim'},
 })
 
 -- general configs
@@ -83,6 +84,7 @@ vim.o.smartcase = true
 vim.o.updatetime = 250
 vim.wo.signcolumn = 'yes'
 vim.o.termguicolors = true
+vim.o.wrap = false
 vim.o.completeopt = 'menuone,noselect'
 vim.keymap.set('n', '<C-l>', '<C-w>l', {noremap = true})
 vim.keymap.set('n', '<C-k>', '<C-w>k', {noremap = true})
@@ -94,6 +96,7 @@ vim.keymap.set('n', '<leader>c', "<cmd>close<cr>", { desc = 'Close buffer' })
 vim.keymap.set('n', '<C-t>', "<cmd>tabnew<cr>", { desc = 'new tab' })
 vim.keymap.set('n', '<tab>', function() vim.cmd.tabnext() end, { desc = 'next tab' })
 vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'previous tab' })
+vim.keymap.set('n', '<C-w>', "<cmd>close<cr>", { desc = 'Close buffer' })
 
 -- mason
 require('mason').setup()
@@ -140,6 +143,21 @@ vim.keymap.set('n', '<leader>fg', function() require('telescope').extensions.liv
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<C-F12>', ':Telescope lsp_document_symbols<CR>', { desc = '[S]earch [S]ymbols' })
 vim.keymap.set('n', '<leader>gg', "<cmd>LazyGit<cr>", { desc = 'Lazy git' })
+vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
+vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
+vim.keymap.set('n', '<F2>', function()
+  local qf_exists = false
+  for _, win in pairs(vim.fn.getwininfo()) do
+    if win['quickfix'] == 1 then
+      qf_exists = true
+    end
+  end
+  if qf_exists then
+    vim.cmd[[cclose]]
+  else
+    vim.cmd[[copen]]
+  end
+end, {desc = "Toggle quickfix"})
 
 -- indent blank line
 require('indent_blankline').setup {
@@ -393,7 +411,7 @@ vim.api.nvim_create_autocmd("FileType", {
     local jdtls_dir = vim.fn.stdpath('data') .. '\\mason\\packages\\jdtls'
     local config_dir = jdtls_dir .. '\\config_win'
     local plugins_dir = jdtls_dir .. '\\plugins\\'
-    local path_to_jar = plugins_dir .. 'org.eclipse.equinox.launcher_1.6.400.v20210924-0641.jar'
+    local path_to_jar = plugins_dir .. 'org.eclipse.equinox.launcher_1.6.500.v20230717-2134.jar'
     local path_to_lombok = jdtls_dir .. '/lombok.jar'
     local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle'}
 
@@ -409,7 +427,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
     local config = {
       cmd = {
-        'C:/Users/altres/AppData/Local/Programs/java18/bin/java',
+        'E:/java/java18/bin/java',
         '-Declipse.application=org.eclipse.jdt.ls.core.id1',
         '-Dosgi.bundles.defaultStartLevel=4',
         '-Declipse.product=org.eclipse.jdt.ls.core.product',
@@ -427,18 +445,23 @@ vim.api.nvim_create_autocmd("FileType", {
       root_dir = root_dir,
       settings = {
         java = {
-          home = 'C:/Users/altres/AppData/Local/Programs/java',
+          home = 'E:/java/jdk1.8.0_342',
           eclipse = {downloadSources = true},
           maven = {downloadSources = true},
           configuration = {
             updateBuildConfiguration = 'interactive',
             runtimes = {
               name = 'JavaSE-8',
-              path = 'C:/Users/altres/AppData/Local/Programs/java8'
+              path = 'E:/java/jdk1.8.0_342',
+              defaults = true
             },
             {
               name = 'JavaSE-18',
-              path = 'C:/Users/altres/AppData/Local/Programs/java18'
+              path = 'E:/java/java18',
+            },
+            {
+              name = 'JavaSE-11',
+              path = 'E:/java/java11'
             }
           },
           implementationsCodeLens = {enabled = true},
@@ -477,13 +500,10 @@ vim.api.nvim_create_autocmd("FileType", {
         },
       }
     }
-    
     config['on_attach'] = function(client, bufnr)
       on_attach(client, bufnr)
     end
-    
     require('jdtls').start_or_attach(config)
-    
   end
 })
 --colorscheme
@@ -721,3 +741,15 @@ ins_right {
 
 -- Now don't forget to initialize lualine
 lualine.setup(config)
+
+vim.cmd[[set grepprg=rg\ --vimgrep]]
+require("interestingwords").setup {
+  colors = { '#aeee00', '#ff0000', '#0000ff', '#b88823', '#ffa724', '#ff2c4b' },
+  search_count = true,
+  navigation = true,
+  search_key = "<leader>m",
+  cancel_search_key = "<leader>M",
+  color_key = "<leader>k",
+  cancel_color_key = "<leader>K",
+}
+require("luasnip.loaders.from_vscode").lazy_load()

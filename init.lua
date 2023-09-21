@@ -105,6 +105,10 @@ require('lazy').setup({
     dependencies = {
       'nvim-lua/plenary.nvim',
       {
+        "nvim-telescope/telescope-live-grep-args.nvim",
+        version = "^1.0.0",
+      },
+      {
         'nvim-telescope/telescope-fzf-native.nvim',
         build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build',
         cond = function()
@@ -112,6 +116,9 @@ require('lazy').setup({
         end,
       },
     },
+    config = function()
+      require("telescope").load_extension("live_grep_args")
+    end
   },
 
   {
@@ -138,27 +145,17 @@ vim.opt.colorcolumn="120"
 vim.opt.cursorcolumn=true
 vim.opt.cursorline=true
 vim.wo.number = true
-
 vim.o.mouse = 'a'
-
 vim.o.clipboard = 'unnamedplus'
-
 vim.o.breakindent = true
-
 vim.o.undofile = true
-
 vim.o.ignorecase = true
 vim.o.smartcase = true
-
 vim.wo.signcolumn = 'yes'
-
 vim.o.updatetime = 250
 vim.o.timeoutlen = 300
-
 vim.o.completeopt = 'menuone,noselect'
-
 vim.o.termguicolors = true
-
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
 -- Remap for dealing with word wrap
@@ -193,24 +190,38 @@ require('telescope').setup {
 pcall(require('telescope').load_extension, 'fzf')
 
 -- See `:help telescope.builtin`
+vim.keymap.set('n', '<C-l>', '<C-w>l', {noremap = true})
+vim.keymap.set('n', '<C-k>', '<C-w>k', {noremap = true})
+vim.keymap.set('n', '<C-j>', '<C-w>j', {noremap = true})
+vim.keymap.set('n', '<C-h>', '<C-w>h', {noremap = true})
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
-vim.keymap.set('n', '<leader>/', function()
-  -- You can pass additional configuration to telescope to change theme, layout, etc.
-  require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-    winblend = 10,
-    previewer = false,
-  })
-end, { desc = '[/] Fuzzily search in current buffer' })
-
+vim.keymap.set('n', '<leader>fz', function()
+  require('telescope.builtin').current_buffer_fuzzy_find({fuzzy = false})
+end, { desc = 'Fuzzy find in current buffer' })
 vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
 vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<leader>fh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>fw', require('telescope.builtin').live_grep, { desc = '[S]earch [L]ive' })
-vim.keymap.set('n', '<leader>fg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>fg',function() require('telescope').extensions.live_grep_args.live_grep_args() end, { desc = '[S]earch by [G]rep args' })
 vim.keymap.set('n', '<leader>fd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>fr', require('telescope.builtin').resume, { desc = '[S]earch [R]resume' })
-
+vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
+vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
+vim.keymap.set('n', '<F2>', function()
+  local qf_exists = false
+  for _, win in pairs(vim.fn.getwininfo()) do
+    if win['quickfix'] == 1 then
+      qf_exists = true
+    end
+  end
+  if qf_exists then
+    vim.cmd[[cclose]]
+  else
+    vim.cmd[[copen]]
+  end
+end, {desc = "Toggle quickfix"})
+vim.keymap.set('n', '<C-t>', "<cmd>tabnew<cr>", { desc = 'new tab' })
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
@@ -337,7 +348,10 @@ end
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  -- clangd = {},
+  clangd = {
+    filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
+    single_file_support = true,
+  },
   -- gopls = {},
   pyright = {
     filetypes = {"python"},
@@ -444,19 +458,11 @@ require("luasnip.loaders.from_vscode").lazy_load()
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 
-require('lspconfig').clangd.setup {
-  capabilities = capabilities,
-  on_attach = on_attach,
-  cmd = { "clangd" },
-  filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
-  single_file_support = true,
-}
-
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "java",
   callback = function ()
     local jdtls_dir = vim.fn.stdpath('data') .. '\\mason\\packages\\jdtls'
-    local config_dir = jdtls_dir .. '\\config_win'
+    local config_dir = jdtls_dir .. '\\config_linux'
     local plugins_dir = jdtls_dir .. '\\plugins\\'
     local path_to_jar = plugins_dir .. 'org.eclipse.equinox.launcher_1.6.500.v20230717-2134.jar'
     local path_to_lombok = jdtls_dir .. '/lombok.jar'

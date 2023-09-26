@@ -152,10 +152,6 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 
-
-if vim.g.neovide then
-end
-
 require("interestingwords").setup {
   colors = { '#aeee00', '#ff0000', '#0000ff', '#b88823', '#ffa724', '#ff2c4b' },
   search_count = true,

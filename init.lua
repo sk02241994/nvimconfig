@@ -39,7 +39,7 @@ require("lazy").setup({
         require("nvim-tree").setup({})
       end,
     },
-    { "ellisonleao/gruvbox.nvim", priority = 1000 },
+    { 'Mofiqul/vscode.nvim', priority = 1000 },
     {
       'nvim-lualine/lualine.nvim',
       dependencies = { 'nvim-tree/nvim-web-devicons' }
@@ -138,7 +138,7 @@ require("telescope").setup {
 vim.api.nvim_set_keymap("n", "<space>e", "<cmd>NvimTreeToggle<cr>", { noremap = true })
 
 vim.o.background = "dark"
-vim.cmd.colorscheme "gruvbox"
+require('vscode').load()
 
 require('lualine').setup({})
 

@@ -81,6 +81,11 @@ vim.keymap.set('n', '<C-w>', "<cmd>close<cr>", { desc = 'Close buffer' })
 vim.keymap.set('n', '<C-n>', "<cmd>tabnew<cr>", { desc = 'new tab' })
 vim.keymap.set('n', '<tab>', function() vim.cmd.tabnext() end, { desc = 'next tab' })
 vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'previous tab' })
+vim.keymap.set('n', '<C-Left>', ':vertical resize+3<CR>', {desc = "vertical resize increase"})
+vim.keymap.set('n', '<C-Right>', ':vertical resize-3<CR>', {desc = "vertical resize decrease"})
+vim.keymap.set('n', '<C-Down>', ':resize-3<CR>', {desc = "horizontal resize decrease"})
+vim.keymap.set('n', '<C-Up>', ':resize+3<CR>', {desc = "horizontal resize increase"})
+
 
 require('telescope').setup {
   defaults = {

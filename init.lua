@@ -36,6 +36,11 @@ vim.cmd[[set grepprg=rg\ --vimgrep]]
 vim.keymap.set('n', "<leader>fw", ":grep<Space>", {desc = "Find word"})
 vim.keymap.set('n', "<leader>ff", ":e<Space>", {desc = "Find file"})
 vim.keymap.set('n', "<leader>fg", "<cmd>grep -S \"\\b<cword>\\b\"<cr>", {desc = "Find word under cursor"})
+vim.keymap.set('n', '<C-Left>', ':vertical resize+3<CR>', {desc = "vertical resize increase"})
+vim.keymap.set('n', '<C-Right>', ':vertical resize-3<CR>', {desc = "vertical resize decrease"})
+vim.keymap.set('n', '<C-Down>', ':resize-3<CR>', {desc = "horizontal resize decrease"})
+vim.keymap.set('n', '<C-Up>', ':resize+3<CR>', {desc = "horizontal resize increase"})
+
 
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
 vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })

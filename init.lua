@@ -20,6 +20,7 @@ vim.bo.softtabstop = 2
 vim.opt.colorcolumn="120"
 vim.opt.cursorcolumn=true
 vim.opt.cursorline=true
+vim.opt.swapfile = false
 
 require("lazy").setup({
     {

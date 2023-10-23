@@ -7,6 +7,7 @@ vim.bo.softtabstop = 2
 vim.opt.colorcolumn="120"
 vim.opt.cursorcolumn=true
 vim.opt.cursorline=true
+vim.opt.swapfile=false
 
 vim.o.hlsearch = true
 vim.wo.number = true

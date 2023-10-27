@@ -20,13 +20,6 @@ M.general = {
           vim.cmd[[copen]]
         end
       end, "Quick fix toggle"},
-    ['<C-w>'] = {"<cmd>close<cr>", "Close window"},
-    ['<C-Left>'] = {":vertical resize+3<CR>", "Vertical resize increase"},
-    ['<C-Right>'] = {":vertical resize-3<CR>", "Vertical resize decrease"},
-    ['<C-Up>'] = {":resize+3<CR>", "Resize increase"},
-    ['<C-Down>'] = {":resize-3<CR>", "Resize decrease"},
-    ['<leader>|'] = {"<cmd>vsplit<CR>", "Vertical Split"},
-    ['<leader>-'] = {"<cmd>split<CR>", "Split"},
   }
 }
 

@@ -1,20 +1,32 @@
 local M = {}
 
-M.LazyGit = {
+vim.cmd[[set grepprg=rg\ --vimgrep]]
+M.general = {
   n = {
-      ["<leader>gg"] = {"<cmd>LazyGit<cr>", "Lazy Git"},
-  }
-}
-
-M.telescope = {
-  n = {
-      ["<leader>fs"] = {"<cmd>Telescope lsp_document_symbols<cr>", "Document Symbols"},
-  }
-}
-
-M.lspconfig = {
-  n = {
-      ["gr"] = {"<cmd>Telescope lsp_references<cr>", "Lsp References"},
+    ['<leader>fg'] = {'<cmd>grep -S "\\b<cword>\\b"<cr>', "Grep word under cursor"},
+    ['<F4>'] = {'<cmd>cn<cr>', "Quick fix next"},
+    ['<F5>'] = {'<cmd>cp<cr>', "Quick fix previous"},
+    ['<F2>'] = {
+      function ()
+        local qf_exists = false
+        for _, win in pairs(vim.fn.getwininfo()) do
+          if win['quickfix'] == 1 then
+            qf_exists = true
+          end
+        end
+        if qf_exists then
+          vim.cmd[[cclose]]
+        else
+          vim.cmd[[copen]]
+        end
+      end, "Quick fix toggle"},
+    ['<C-w>'] = {"<cmd>close<cr>", "Close window"},
+    ['<C-Left>'] = {":vertical resize+3<CR>", "Vertical resize increase"},
+    ['<C-Right>'] = {":vertical resize-3<CR>", "Vertical resize decrease"},
+    ['<C-Up>'] = {":resize+3<CR>", "Resize increase"},
+    ['<C-Down>'] = {":resize-3<CR>", "Resize decrease"},
+    ['<leader>|'] = {"<cmd>vsplit<CR>", "Vertical Split"},
+    ['<leader>-'] = {"<cmd>split<CR>", "Split"},
   }
 }
 

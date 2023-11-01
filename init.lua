@@ -157,3 +157,4 @@ require("interestingwords").setup {
   cancel_color_key = "<leader>K",
 }
 vim.cmd[[set grepprg=rg\ --vimgrep]]
+vim.cmd[[set switchbuf=usetab,newtab]]

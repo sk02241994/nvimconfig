@@ -47,6 +47,15 @@ require("lazy").setup({
     },
     {'kdheepak/lazygit.nvim'},
     {'Mr-LLLLL/interestingwords.nvim'},
+    {
+      "folke/which-key.nvim",
+      event = "VeryLazy",
+      init = function()
+        vim.o.timeout = true
+        vim.o.timeoutlen = 300
+      end,
+      opts = {}
+    }
 })
 
 vim.o.hlsearch = true
@@ -67,7 +76,7 @@ vim.keymap.set('n', '<C-j>', '<C-w>j', {noremap = true})
 vim.keymap.set('n', '<C-h>', '<C-w>h', {noremap = true})
 vim.keymap.set('n', '<leader>|', "<cmd>vsplit<cr>", { desc = 'Vertical split' })
 vim.keymap.set('n', '<leader>-', "<cmd>split<cr>", { desc = 'Horizontal split' })
-vim.keymap.set('n', '<C-w>', "<cmd>close<cr>", { desc = 'Close buffer' })
+vim.keymap.set('n', '<leader>x', "<cmd>close<cr>", { desc = 'Close buffer' })
 vim.keymap.set('n', '<C-n>', "<cmd>tabnew<cr>", { desc = 'new tab' })
 vim.keymap.set('n', '<tab>', function() vim.cmd.tabnext() end, { desc = 'next tab' })
 vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'previous tab' })
@@ -101,7 +110,6 @@ vim.keymap.set('n', '<leader>fz', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find({fuzzy = false})
 end, { desc = 'Fuzzily search in current buffer]' })
-vim.keymap.set('n', '<leader>gg', "<cmd>LazyGit<cr>", { desc = 'Lazy git' })
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
 vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
 vim.keymap.set('n', '<F2>', function() 

@@ -147,7 +147,6 @@ require('vscode').load()
 require('lualine').setup({})
 
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "c", "lua", "java", "python", "c_sharp", "cpp" },
   sync_install = false,
   auto_install = true,
   highlight = {

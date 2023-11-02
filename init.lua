@@ -34,7 +34,6 @@ vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'p
 vim.keymap.set('n', '<leader>e', "<cmd>Lexplore<cr>", {desc = 'Explore'})
 vim.keymap.set('n', '<leader>fb', ":buffers<CR>:buffer<Space>", {desc = 'Show buffers'})
 vim.cmd[[set grepprg=rg\ --vimgrep]]
-vim.cmd[[set switchbuf=usetab,newtab]]
 vim.keymap.set('n', "<leader>fw", ":grep<Space>", {desc = "Find word"})
 vim.keymap.set('n', "<leader>ff", ":e<Space>", {desc = "Find file"})
 vim.keymap.set('n', "<leader>fg", "<cmd>grep -S \"\\b<cword>\\b\"<cr>", {desc = "Find word under cursor"})

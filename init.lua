@@ -55,7 +55,8 @@ require("lazy").setup({
         vim.o.timeoutlen = 300
       end,
       opts = {}
-    }
+    },
+    { 'skywind3000/asyncrun.vim' }
 })
 
 vim.o.hlsearch = true

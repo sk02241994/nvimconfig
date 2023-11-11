@@ -44,7 +44,7 @@ lspconfig.cmake.setup {
 }
 
 lspconfig.kotlin_language_server.setup {
-  cmd = { vim.fn.stdpath('data') .. '\\mason\\packages\\kotlin-language-server\\bin\\kotlin-language-server.bat'},
+  cmd = { vim.fn.stdpath('data') .. '/mason/packages/kotlin-language-server/bin/kotlin-language-server' },
   capabilities = capabilities,
   filetypes = { "kotlin" },
   root_dir = lspconfig.util.root_pattern("settings.gradle"),

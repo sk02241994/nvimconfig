@@ -12,6 +12,7 @@ lspconfig.tsserver.setup {
 }
 
 lspconfig.clangd.setup {
+  cmd = {"clangd"},
   capabilities = capabilities,
   filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
   single_file_support = true,

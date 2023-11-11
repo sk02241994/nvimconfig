@@ -1,5 +1,8 @@
 local plugins = {
-  { 'skywind3000/asyncrun.vim' },
+  {
+    'skywind3000/asyncrun.vim',
+    lazy = false,
+  },
   {
     "neovim/nvim-lspconfig",
     config = function()

@@ -86,6 +86,7 @@ lspconfig.jdtls.setup {
       implementationsCodeLens = {enabled = true},
       referencesCodeLens = {enabled = true},
       references = {includeDecompiledSources = true},
+      maxConcurrentBuilds = 3,
     },
     signatureHelp = {enabled = true},
     completion = {

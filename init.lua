@@ -75,6 +75,7 @@ require("lazy").setup({
   },
   {'arkav/lualine-lsp-progress'},
   {'ms-jpq/coq_nvim'},
+  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
 })
 
 vim.o.hlsearch = true
@@ -425,7 +426,6 @@ local config = {
   extensions = {}
 }
 
-
 -- Inserts a component in lualine_c at left section
 local function ins_left(component)
   table.insert(config.sections.lualine_c, component)
@@ -455,3 +455,4 @@ ins_left {
   spinner_symbols = { '🌑 ', '🌒 ', '🌓 ', '🌔 ', '🌕 ', '🌖 ', '🌗 ', '🌘 ' },
 }
 require('lualine').setup(config)
+require("ibl").setup({scope = {enabled = true}})

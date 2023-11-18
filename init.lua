@@ -74,6 +74,7 @@ require("lazy").setup({
     },
   },
   {'arkav/lualine-lsp-progress'},
+  {'ms-jpq/coq_nvim'},
 })
 
 vim.o.hlsearch = true
@@ -212,11 +213,12 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 --lspconfig
 local lspconfig = require('lspconfig')
+local coq = require('coq')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = false
 
-lspconfig.lua_ls.setup {
+lspconfig.lua_ls.setup(coq.lsp_ensure_capabilities({
   capabilities = capabilities,
   settings = {
     Lua = {
@@ -234,22 +236,22 @@ lspconfig.lua_ls.setup {
       },
     },
   },
-}
+}))
 
-lspconfig.tsserver.setup {
+lspconfig.tsserver.setup(coq.lsp_ensure_capabilities({
   filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
   init_options = {hostInfo = "neovim"},
   single_file_support = true,
   capabilities = capabilities,
-}
+}))
 
-lspconfig.clangd.setup {
+lspconfig.clangd.setup (coq.lsp_ensure_capabilities({
   capabilities = capabilities,
   filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
   single_file_support = true,
-}
+}))
 
-lspconfig.pyright.setup {
+lspconfig.pyright.setup(coq.lsp_ensure_capabilities({
   filetypes = {"python"},
   settings ={
     python = {
@@ -262,25 +264,25 @@ lspconfig.pyright.setup {
   },
   single_file_support = true,
   capabilities = capabilities,
-}
+}))
 
-lspconfig.cmake.setup {
+lspconfig.cmake.setup(coq.lsp_ensure_capabilities({
   filetypes = {"cmake", "CMakeLists.txt"},
   init_options = { buildDirectory = "build" },
   single_file_support = true,
   capabilities = capabilities,
-}
+}))
 
-lspconfig.kotlin_language_server.setup {
+lspconfig.kotlin_language_server.setup(coq.lsp_ensure_capabilities({
   cmd = { vim.fn.stdpath('data') .. '/mason/packages/kotlin-language-server/bin/kotlin-language-server'},
   capabilities = capabilities,
   filetypes = { "kotlin" },
   root_dir = lspconfig.util.root_pattern("settings.gradle"),
   single_file_support = true,
-}
+}))
 
 local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
-lspconfig.jdtls.setup {
+lspconfig.jdtls.setup(coq.lsp_ensure_capabilities({
   cmd = {vim.fn.stdpath('data') .. '/mason/packages/jdtls/bin/jdtls'},
   filetypes = {'java'},
   capabilities = capabilities,
@@ -346,7 +348,7 @@ lspconfig.jdtls.setup {
       useBlocks = true,
     },
   },
-}
+}))
 
 -- cmp
 
@@ -399,8 +401,8 @@ local colors = {
 local config = {
   options = {
     icons_enabled = true,
-    component_separators = {'', ''},
-    section_separators = {'', ''},
+    -- component_separators = {'', ''},
+    -- section_separators = {'', ''},
     disabled_filetypes = {}
   },
   sections = {
@@ -453,4 +455,3 @@ ins_left {
   spinner_symbols = { '🌑 ', '🌒 ', '🌓 ', '🌔 ', '🌕 ', '🌖 ', '🌗 ', '🌘 ' },
 }
 require('lualine').setup(config)
-

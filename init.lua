@@ -75,7 +75,7 @@ require("lazy").setup({
   },
   {'arkav/lualine-lsp-progress'},
   {'ms-jpq/coq_nvim'},
-  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
+  { "lukas-reineke/indent-blankline.nvim", opts = {} },
 })
 
 vim.o.hlsearch = true
@@ -455,4 +455,4 @@ ins_left {
   spinner_symbols = { '🌑 ', '🌒 ', '🌓 ', '🌔 ', '🌕 ', '🌖 ', '🌗 ', '🌘 ' },
 }
 require('lualine').setup(config)
-require("ibl").setup({scope = {enabled = true}})
+require("indent_blankline").setup({scope = {enabled = true}})

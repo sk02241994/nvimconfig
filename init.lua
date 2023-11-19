@@ -213,6 +213,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 --lspconfig
+-- can look more into specific configs from this website https://www.andersevenrud.net/neovim.github.io/lsp/configurations/
 local lspconfig = require('lspconfig')
 local coq = require('coq')
 local capabilities = vim.lsp.protocol.make_client_capabilities()

@@ -274,11 +274,14 @@ lspconfig.cmake.setup(coq.lsp_ensure_capabilities({
   capabilities = capabilities,
 }))
 
+local root_files = {'settings.gradle'}
 lspconfig.kotlin_language_server.setup(coq.lsp_ensure_capabilities({
   cmd = { vim.fn.stdpath('data') .. '/mason/packages/kotlin-language-server/bin/kotlin-language-server'},
   capabilities = capabilities,
   filetypes = { "kotlin" },
-  root_dir = lspconfig.util.root_pattern("settings.gradle"),
+  root_dir = function (fname)
+    return lspconfig.util.root_pattern(unpack(root_files))(fname) or vim.fn.getcwd()
+  end,
   single_file_support = true,
 }))
 

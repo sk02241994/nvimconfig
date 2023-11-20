@@ -127,7 +127,7 @@ vim.keymap.set('n', '<leader>fz', function()
 end, { desc = 'Fuzzily search in current buffer]' })
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
 vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
-vim.keymap.set('n', '<F2>', function() 
+vim.keymap.set('n', '<F2>', function()
   local qf_exists = false
   for _, win in pairs(vim.fn.getwininfo()) do
     if win['quickfix'] == 1 then
@@ -281,7 +281,7 @@ lspconfig.kotlin_language_server.setup(coq.lsp_ensure_capabilities({
   capabilities = capabilities,
   filetypes = { "kotlin" },
   root_dir = function (fname)
-    return lspconfig.util.root_pattern(unpack(root_files))(fname) or vim.fn.getcwd()
+    return lspconfig.util.root_pattern(vim.fs.find(root_files))(fname) or vim.fn.getcwd()
   end,
   single_file_support = true,
 }))

@@ -31,7 +31,7 @@ vim.keymap.set('n', '<C-h>', '<C-w>h', {noremap = true})
 vim.keymap.set('n', '<C-n>', "<cmd>tabnew<cr>", { desc = 'new tab' })
 vim.keymap.set('n', '<tab>', function() vim.cmd.tabnext() end, { desc = 'next tab' })
 vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'previous tab' })
-vim.keymap.set('n', '<leader>e', "<cmd>Lexplore<cr>", {desc = 'Explore'})
+vim.keymap.set('n', '<leader>E', "<cmd>Lexplore<cr>", {desc = 'Explore'})
 vim.keymap.set('n', '<leader>fb', ":buffers<CR>:buffer<Space>", {desc = 'Show buffers'})
 vim.cmd[[set grepprg=rg\ --vimgrep]]
 vim.keymap.set('n', "<leader>fw", ":grep<Space>", {desc = "Find word"})
@@ -132,6 +132,19 @@ local function lineinfo()
   return " %P %l:%c "
 end
 
+local function lsp_progress ()
+  local lsp = vim.lsp.util.get_progress_messages()[1]
+  if lsp then
+    local name = lsp.name or ""
+    local msg = lsp.message or ""
+    local percentage = lsp.percentage or 0
+    local title = lsp.title or ""
+    return string.format(" %%<%s: %s %s (%s%%%%) ", name, title, msg, percentage)
+  end
+
+  return ""
+end
+
 Statusline = {}
 
 Statusline.active = function()
@@ -142,6 +155,7 @@ Statusline.active = function()
     "%#Normal# ",
     filepath(),
     filename(),
+    lsp_progress(),
     "%#Normal#",
     "%=%#StatusLineExtra#",
     filetype(),
@@ -166,3 +180,219 @@ vim.api.nvim_exec([[
   augroup END
 ]], false)
 
+-- Lsp setup
+
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+vim.cmd([[autocmd User LspProgressUpdate redrawstatus]])
+vim.api.nvim_create_autocmd('LspAttach', {
+  group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+  callback = function(args)
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, {desc = '[R]e[n]ame', buffer = args.buf})
+    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction', buffer = args.buf})
+
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {desc = '[G]oto [D]efinition', buffer = args.buf})
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, {desc = '[G]oto [R]eferences', buffer = args.buf})
+    vim.keymap.set('n', 'gI', vim.lsp.buf.implementation, {desc = '[G]oto [I]mplementation', buffer = args.buf})
+    vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, {desc = 'Type [D]efinition', buffer = args.buf})
+    vim.keymap.set('n', '<leader>ds', vim.lsp.buf.document_symbol, {desc = '[D]ocument [S]ymbols', buffer = args.buf})
+    vim.keymap.set('n', '<leader>ws', vim.lsp.buf.workspace_symbol, {desc = '[W]orkspace [S]ymbols', buffer = args.buf})
+
+    -- See `:help K, ` for why this keymap
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, {desc = 'Hover Documentation', buffer = args.buf})
+    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, {desc = 'Signature Documentation', buffer = args.buf})
+
+    -- Lesser used 'n', LSP functionality
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, {desc = '[G]oto [D]eclaration', buffer = args.buf})
+    vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, {desc = '[W]orkspace [A]dd Folder', buffer = args.buf})
+    vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, {desc = '[W]orkspace [R]emove Folder', buffer = args.buf})
+    vim.keymap.set('n', '<leader>wl', function()
+      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, {desc = '[W]orkspace [L]ist Folders', buffer = args.buf})
+  end
+})
+
+local autocmd = vim.api.nvim_create_autocmd
+autocmd("FileType", {
+  pattern = "lua",
+  callback = function()
+    local client = vim.lsp.start({
+      name = 'lua_ls',
+      cmd = {vim.fn.stdpath('data') .. '/lua/bin/lua-language-server' },
+      settings = {
+        Lua = {
+          diagnostics = {
+            globals = { "vim" },
+          },
+          workspace = {
+            library = {
+              [vim.fn.expand "$VIMRUNTIME/lua"] = true,
+              [vim.fn.expand "$VIMRUNTIME/lua/vim/lsp"] = true,
+              [vim.fn.stdpath "data" .. "/lazy/lazy.nvim/lua/lazy"] = true,
+            },
+            maxPreload = 100000,
+            preloadFileSize = 10000,
+          },
+        },
+      }
+    })
+    vim.lsp.buf_attach_client(0, client)
+  end
+})
+
+autocmd('FileType', {
+  pattern = {'c', 'cpp'},
+  callback = function ()
+    local client = vim.lsp.start({
+      name = "clangd",
+      cmd = {'clangd'},
+    })
+    vim.lsp.buf_attach_client(0, client)
+  end
+})
+
+autocmd('FileType', {
+  pattern = {"py", "python"},
+  callback = function()
+    local client = vim.lsp.start({
+      name = "pyright",
+      cmd = {vim.fn.stdpath('data') .. '/pyright/Scripts/pyright-langserver', '--stdio'},
+    })
+
+    vim.lsp.buf_attach_client(0, client)
+  end
+})
+
+autocmd('FileType', {
+  pattern = {"cmake", "CMakeLists.txt"},
+  callback = function()
+    local client = vim.lsp.start({
+      name = "cmake",
+      cmd = {vim.fn.stdpath('data') .. '/pyright/Scripts/cmake-language-server'},
+    })
+
+    vim.lsp.buf_attach_client(0, client)
+  end
+})
+
+autocmd('FileType', {
+  pattern = {"kotlin"},
+  callback = function()
+    local client = vim.lsp.start({
+      name = "cmake",
+      cmd = {vim.fn.stdpath('data') .. '/kotlin-language-server/bin/kotlin-language-server.BAT'},
+      root_dir = vim.fs.dirname(vim.fs.find({'settings.gradle'}, {upward = true})[1]) or vim.fn.getcwd()
+    })
+
+    vim.lsp.buf_attach_client(0, client)
+  end
+})
+
+--[[
+command for jdtls
+java ^
+  -Declipse.application=org.eclipse.jdt.ls.core.id1 ^
+  -Dosgi.bundles.defaultStartLevel=4 ^
+  -Declipse.product=org.eclipse.jdt.ls.core.product ^
+  -Dlog.protocol=true ^
+  -Dosgi.checkConfiguration=true ^
+  -Dlog.level=ALL ^
+  -Xms1g ^
+  -Xmx4G ^
+  --add-modules=ALL-SYSTEM ^
+  --add-opens java.base/java.util=ALL-UNNAMED ^
+  --add-opens java.base/java.lang=ALL-UNNAMED ^
+  -jar {complete path to}\jdtls\plugins\org.eclipse.equinox.launcher_1.6.500.v20230717-2134.jar ^
+  -configuration {complete path to}\jdtls\config_linux/win\ ^
+  -data %1 ^
+  -javaagent:{complete path to}\jdtls\lombok.jar 
+--]]--
+autocmd('FileType', {
+  pattern = "java",
+  callback = function()
+    local root_markers = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
+    local root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1])
+    local home = os.getenv('UserProfile')
+    local workspace_folder = home .. "/.workspace" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
+    local client = vim.lsp.start({
+      name = "jdtls",
+      cmd = {vim.fn.stdpath('data') .. '/jdtls/jdtls.bat', workspace_folder},
+      root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1]) or vim.fn.getcwd(),
+      settings = {
+        java = {
+          -- home = 'E:/java/jdk1.8.0_342',
+          eclipse = {downloadSources = true},
+          maven = {downloadSources = true},
+          gradle = {downloadSources = true},
+          configuration = {
+            updateBuildConfiguration = 'interactive',
+            --[[runtimes = {
+            name = 'JavaSE-8',
+            path = 'E:/java/jdk1.8.0_342',
+            defaults = true
+            },
+            {
+            name = 'JavaSE-18',
+            path = 'E:/java/java18',
+            },
+            {
+            name = 'JavaSE-11',
+            path = 'E:/java/java11'
+            }]]--
+          },
+          implementationsCodeLens = {enabled = true},
+          referencesCodeLens = {enabled = true},
+          references = {includeDecompiledSources = true},
+          maxConcurrentBuilds = 3,
+        },
+        signatureHelp = {enabled = true},
+        completion = {
+          favoriteStaticMembers = {
+            "org.hamcrest.MatcherAssert.assertThat",
+            "org.hamcrest.Matchers.*",
+            "org.hamcrest.CoreMatchers.*",
+            "org.junit.jupiter.api.Assertions.*",
+            "java.util.Objects.requireNonNull",
+            "java.util.Objects.requireNonNullElse",
+            "org.mockito.Mockito.*",
+          },
+          importOrder = {
+            "java",
+            "javax",
+            "com",
+            "org"
+          },
+        },
+        sources = {
+          organizeImports = {
+            starThreshold = 9999,
+            staticStarThreshold = 9999,
+          },
+        },
+        codeGeneration = {
+          toString = {
+            template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
+          },
+          useBlocks = true,
+        },
+      },
+    })
+    vim.lsp.buf_attach_client(0, client)
+  end
+})
+
+autocmd('FileType', {
+  pattern = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+  callback = function()
+    local client = vim.lsp.start({
+      name = "typescript-language-server",
+      cmd = {vim.fn.stdpath('data') .. '/tsserver/typescript-language-server.cmd', '--stdio'},
+      init_options = {hostInfo = "neovim"},
+    })
+
+    vim.lsp.buf_attach_client(0, client)
+  end
+})

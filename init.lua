@@ -23,40 +23,45 @@ vim.opt.cursorline=true
 vim.opt.swapfile = false
 
 require("lazy").setup({
-    {
-        'nvim-telescope/telescope.nvim',
-        dependencies = { 'nvim-lua/plenary.nvim', "nvim-telescope/telescope-live-grep-args.nvim" }
-    },
-    {
-        "windwp/nvim-autopairs",
-        config = function() require("nvim-autopairs").setup {} end
-    },
-    {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
-    {'nvim-treesitter/nvim-treesitter-textobjects'},
-    { 
-      'nvim-tree/nvim-tree.lua',
-      dependencies = { 'nvim-tree/nvim-web-devicons' },
-      config = function()
-        require("nvim-tree").setup({})
-      end,
-    },
-    { 'Mofiqul/vscode.nvim', priority = 1000 },
-    {
-      'nvim-lualine/lualine.nvim',
-      dependencies = { 'nvim-tree/nvim-web-devicons' }
-    },
-    {'kdheepak/lazygit.nvim'},
-    {'Mr-LLLLL/interestingwords.nvim'},
-    {
-      "folke/which-key.nvim",
-      event = "VeryLazy",
-      init = function()
-        vim.o.timeout = true
-        vim.o.timeoutlen = 300
-      end,
-      opts = {}
-    },
-    { 'skywind3000/asyncrun.vim' }
+  {
+    'nvim-telescope/telescope.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim', "nvim-telescope/telescope-live-grep-args.nvim" }
+  },
+  {
+    "windwp/nvim-autopairs",
+    config = function() require("nvim-autopairs").setup {} end
+  },
+  {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
+  {'nvim-treesitter/nvim-treesitter-textobjects'},
+  { 
+    'nvim-tree/nvim-tree.lua',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require("nvim-tree").setup({})
+    end,
+  },
+  { 'Mofiqul/vscode.nvim', priority = 1000 },
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' }
+  },
+  {'kdheepak/lazygit.nvim'},
+  {'Mr-LLLLL/interestingwords.nvim'},
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    init = function()
+      vim.o.timeout = true
+      vim.o.timeoutlen = 300
+    end,
+    opts = {}
+  },
+  { 'skywind3000/asyncrun.vim' },
+  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {},
+  config = function()
+    require("ibl").setup {scope = {enabled = true}}
+  end },
+
 })
 
 vim.o.hlsearch = true

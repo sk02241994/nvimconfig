@@ -140,7 +140,7 @@ require("telescope").setup {
 }
 -- To get telescope-file-browser loaded and working with telescope,
 -- you need to call load_extension, somewhere after setup function:
-vim.api.nvim_set_keymap("n", "<space>e", "<cmd>NvimTreeToggle<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<space>E", "<cmd>NvimTreeToggle<cr>", { noremap = true })
 
 vim.o.background = "dark"
 require('vscode').load()

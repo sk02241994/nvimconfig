@@ -259,7 +259,7 @@ autocmd('FileType', {
   callback = function()
     local client = vim.lsp.start({
       name = "pyright",
-      cmd = {vim.fn.stdpath('data') .. '/pyright/Scripts/pyright-langserver', '--stdio'},
+      cmd = {vim.fn.stdpath('data') .. '/pyright/bin/pyright-langserver', '--stdio'},
     })
 
     vim.lsp.buf_attach_client(0, client)
@@ -271,7 +271,7 @@ autocmd('FileType', {
   callback = function()
     local client = vim.lsp.start({
       name = "cmake",
-      cmd = {vim.fn.stdpath('data') .. '/pyright/Scripts/cmake-language-server'},
+      cmd = {vim.fn.stdpath('data') .. '/pyright/bin/cmake-language-server'},
     })
 
     vim.lsp.buf_attach_client(0, client)
@@ -283,7 +283,7 @@ autocmd('FileType', {
   callback = function()
     local client = vim.lsp.start({
       name = "cmake",
-      cmd = {vim.fn.stdpath('data') .. '/kotlin-language-server/bin/kotlin-language-server.BAT'},
+      cmd = {vim.fn.stdpath('data') .. '/kotlin-language-server/bin/kotlin-language-server'},
       root_dir = vim.fs.dirname(vim.fs.find({'settings.gradle'}, {upward = true})[1]) or vim.fn.getcwd()
     })
 
@@ -315,11 +315,11 @@ autocmd('FileType', {
   callback = function()
     local root_markers = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
     local root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1])
-    local home = os.getenv('UserProfile')
+    local home = os.getenv('HOME')
     local workspace_folder = home .. "/.workspace" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
     local client = vim.lsp.start({
       name = "jdtls",
-      cmd = {vim.fn.stdpath('data') .. '/jdtls/jdtls.bat', workspace_folder},
+      cmd = {vim.fn.stdpath('data') .. '/jdtls/jdtls', workspace_folder},
       root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1]) or vim.fn.getcwd(),
       settings = {
         java = {
@@ -389,7 +389,7 @@ autocmd('FileType', {
   callback = function()
     local client = vim.lsp.start({
       name = "typescript-language-server",
-      cmd = {vim.fn.stdpath('data') .. '/tsserver/typescript-language-server.cmd', '--stdio'},
+      cmd = {vim.fn.stdpath('data') .. '/tsserver/bin/typescript-language-server', '--stdio'},
       init_options = {hostInfo = "neovim"},
     })
 

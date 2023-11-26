@@ -61,6 +61,7 @@ require("lazy").setup({
   config = function()
     require("ibl").setup {scope = {enabled = true}}
   end },
+  {'preservim/tagbar'}
 
 })
 
@@ -126,6 +127,7 @@ vim.keymap.set('n', '<F2>', function()
     vim.cmd[[copen]]
   end
 end, {desc = "Toggle quickfix"})
+vim.keymap.set('n', '<F8>', ':TagbarToggle<CR>', {desc = "Tagbar toggle"})
 
 -- You don't need to set any of these options.
 -- IMPORTANT!: this is only a showcase of how you can set default options!

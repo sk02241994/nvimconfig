@@ -315,7 +315,7 @@ autocmd('FileType', {
   callback = function()
     local root_markers = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
     local root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1])
-    local home = os.getenv('HOME')
+    local home = os.getenv('TEMP')
     local workspace_folder = home .. "/.workspace" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
     local client = vim.lsp.start({
       name = "jdtls",

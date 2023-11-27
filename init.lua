@@ -224,6 +224,7 @@ capabilities = require('cmp_nvim_lsp').default_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = false
 
 lspconfig.lua_ls.setup(coq.lsp_ensure_capabilities({
+  cmd = {vim.fn.stdpath('data') .. '/mason/packages/lua-language-server/bin/lua-language-server'},
   capabilities = capabilities,
   settings = {
     Lua = {
@@ -244,6 +245,7 @@ lspconfig.lua_ls.setup(coq.lsp_ensure_capabilities({
 }))
 
 lspconfig.tsserver.setup(coq.lsp_ensure_capabilities({
+  cmd = {vim.fn.stdpath('data') .. '/mason/packages/typescript-language-server/node_modules/.bin/typescript-language-server', '--stdio'},
   filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
   init_options = {hostInfo = "neovim"},
   single_file_support = true,
@@ -251,12 +253,14 @@ lspconfig.tsserver.setup(coq.lsp_ensure_capabilities({
 }))
 
 lspconfig.clangd.setup (coq.lsp_ensure_capabilities({
+  cmd = {'clangd'},
   capabilities = capabilities,
   filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
   single_file_support = true,
 }))
 
 lspconfig.pyright.setup(coq.lsp_ensure_capabilities({
+  cmd = {vim.fn.stdpath('data') .. '/mason/packages/pyright/node_modules/.bin/pyright-langserver', '--stdio'},
   filetypes = {"python"},
   settings ={
     python = {
@@ -272,6 +276,7 @@ lspconfig.pyright.setup(coq.lsp_ensure_capabilities({
 }))
 
 lspconfig.cmake.setup(coq.lsp_ensure_capabilities({
+  cmd = {vim.fn.stdpath('data') .. '/mason/packages/cmake-language-server/venv/Scripts/cmake-language-server'},
   filetypes = {"cmake", "CMakeLists.txt"},
   init_options = { buildDirectory = "build" },
   single_file_support = true,
@@ -290,8 +295,11 @@ lspconfig.kotlin_language_server.setup(coq.lsp_ensure_capabilities({
 }))
 
 local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
+local root_dir = vim.fs.dirname(vim.fs.find(root_marker)[1])
+local home = os.getenv('TEMP')
+local workspace_folder = home .. "/.workspace" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
 lspconfig.jdtls.setup(coq.lsp_ensure_capabilities({
-  cmd = {vim.fn.stdpath('data') .. '/mason/packages/jdtls/bin/jdtls'},
+  cmd = {vim.fn.stdpath('data') .. '/mason/packages/jdtls/bin/jdtls', workspace_folder},
   filetypes = {'java'},
   capabilities = capabilities,
   single_file_support = true,

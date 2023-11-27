@@ -224,7 +224,7 @@ capabilities = require('cmp_nvim_lsp').default_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = false
 
 lspconfig.lua_ls.setup(coq.lsp_ensure_capabilities({
-  cmd = {vim.fn.stdpath('data') .. '/mason/packages/lua-language-server/bin/lua-language-server'},
+  cmd = {vim.fn.stdpath('data') .. '/mason/packages/lua-language-server/lua-language-server'},
   capabilities = capabilities,
   settings = {
     Lua = {
@@ -276,7 +276,7 @@ lspconfig.pyright.setup(coq.lsp_ensure_capabilities({
 }))
 
 lspconfig.cmake.setup(coq.lsp_ensure_capabilities({
-  cmd = {vim.fn.stdpath('data') .. '/mason/packages/cmake-language-server/venv/Scripts/cmake-language-server'},
+  cmd = {vim.fn.stdpath('data') .. '/mason/packages/cmake-language-server/venv/bin/cmake-language-server'},
   filetypes = {"cmake", "CMakeLists.txt"},
   init_options = { buildDirectory = "build" },
   single_file_support = true,

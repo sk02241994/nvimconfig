@@ -100,7 +100,7 @@ vim.keymap.set('n', '<C-l>', '<C-w>l', {noremap = true})
 vim.keymap.set('n', '<C-k>', '<C-w>k', {noremap = true})
 vim.keymap.set('n', '<C-j>', '<C-w>j', {noremap = true})
 vim.keymap.set('n', '<C-h>', '<C-w>h', {noremap = true})
-vim.keymap.set('n', '<C-n>', "<cmd>tabnew<cr>", { desc = 'new tab' })
+vim.keymap.set('n', '<leader><C-n>', "<cmd>tabnew<cr>", { desc = 'new tab' })
 vim.keymap.set('n', '<tab>', function() vim.cmd.tabnext() end, { desc = 'next tab' })
 vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'previous tab' })
 

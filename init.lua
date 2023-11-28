@@ -28,7 +28,7 @@ vim.keymap.set('n', '<C-l>', '<C-w>l', {noremap = true})
 vim.keymap.set('n', '<C-k>', '<C-w>k', {noremap = true})
 vim.keymap.set('n', '<C-j>', '<C-w>j', {noremap = true})
 vim.keymap.set('n', '<C-h>', '<C-w>h', {noremap = true})
-vim.keymap.set('n', '<C-n>', "<cmd>tabnew<cr>", { desc = 'new tab' })
+vim.keymap.set('n', '<leader><C-n>', "<cmd>tabnew<cr>", { desc = 'new tab' })
 vim.keymap.set('n', '<tab>', function() vim.cmd.tabnext() end, { desc = 'next tab' })
 vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'previous tab' })
 vim.keymap.set('n', '<leader>E', "<cmd>Lexplore<cr>", {desc = 'Explore'})
@@ -40,7 +40,7 @@ vim.keymap.set('n', "<leader>fg", "<cmd>grep -S \"\\b<cword>\\b\"<cr>", {desc = 
 
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
 vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
-vim.keymap.set('n', '<F2>', function() 
+vim.keymap.set('n', '<F2>', function()
   local qf_exists = false
   for _, win in pairs(vim.fn.getwininfo()) do
     if win['quickfix'] == 1 then

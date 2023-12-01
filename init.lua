@@ -216,183 +216,152 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 local autocmd = vim.api.nvim_create_autocmd
-autocmd("FileType", {
-  pattern = "lua",
-  callback = function()
-    local client = vim.lsp.start({
-      name = 'lua_ls',
-      cmd = {vim.fn.stdpath('data') .. '/lua/bin/lua-language-server' },
-      settings = {
-        Lua = {
-          diagnostics = {
-            globals = { "vim" },
-          },
-          workspace = {
-            library = {
-              [vim.fn.expand "$VIMRUNTIME/lua"] = true,
-              [vim.fn.expand "$VIMRUNTIME/lua/vim/lsp"] = true,
-              [vim.fn.stdpath "data" .. "/lazy/lazy.nvim/lua/lazy"] = true,
-            },
-            maxPreload = 100000,
-            preloadFileSize = 10000,
-          },
+
+local lspconfig = {
+  lua = {
+    pattern = {'lua'},
+    name = "lua_ls",
+    cmd = {vim.fn.stdpath('data') .. '/lua/bin/lua-language-server'},
+    settings = {
+      Lua = {
+        diagnostics = {
+          globals = { "vim" },
         },
-      }
-    })
-    vim.lsp.buf_attach_client(0, client)
-  end
-})
-
-autocmd('FileType', {
-  pattern = {'c', 'cpp'},
-  callback = function ()
-    local client = vim.lsp.start({
-      name = "clangd",
-      cmd = {'clangd'},
-    })
-    vim.lsp.buf_attach_client(0, client)
-  end
-})
-
-autocmd('FileType', {
-  pattern = {"py", "python"},
-  callback = function()
-    local client = vim.lsp.start({
-      name = "pyright",
-      cmd = {vim.fn.stdpath('data') .. '/pyright/bin/pyright-langserver', '--stdio'},
-    })
-
-    vim.lsp.buf_attach_client(0, client)
-  end
-})
-
-autocmd('FileType', {
-  pattern = {"cmake", "CMakeLists.txt"},
-  callback = function()
-    local client = vim.lsp.start({
-      name = "cmake",
-      cmd = {vim.fn.stdpath('data') .. '/pyright/bin/cmake-language-server'},
-    })
-
-    vim.lsp.buf_attach_client(0, client)
-  end
-})
-
-autocmd('FileType', {
-  pattern = {"kotlin"},
-  callback = function()
-    local client = vim.lsp.start({
-      name = "cmake",
-      cmd = {vim.fn.stdpath('data') .. '/kotlin-language-server/bin/kotlin-language-server'},
-      root_dir = vim.fs.dirname(vim.fs.find({'settings.gradle'}, {upward = true})[1]) or vim.fn.getcwd()
-    })
-
-    vim.lsp.buf_attach_client(0, client)
-  end
-})
-
---[[
-command for jdtls
-java ^
-  -Declipse.application=org.eclipse.jdt.ls.core.id1 ^
-  -Dosgi.bundles.defaultStartLevel=4 ^
-  -Declipse.product=org.eclipse.jdt.ls.core.product ^
-  -Dlog.protocol=true ^
-  -Dosgi.checkConfiguration=true ^
-  -Dlog.level=ALL ^
-  -Xms1g ^
-  -Xmx4G ^
-  --add-modules=ALL-SYSTEM ^
-  --add-opens java.base/java.util=ALL-UNNAMED ^
-  --add-opens java.base/java.lang=ALL-UNNAMED ^
-  -jar {complete path to}\jdtls\plugins\org.eclipse.equinox.launcher_1.6.500.v20230717-2134.jar ^
-  -configuration {complete path to}\jdtls\config_linux/win\ ^
-  -data %1 ^
-  -javaagent:{complete path to}\jdtls\lombok.jar 
---]]--
-autocmd('FileType', {
-  pattern = "java",
-  callback = function()
-    local root_markers = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
-    local root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1])
-    local home = os.getenv('TEMP')
-    local workspace_folder = home .. "/.workspace" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
-    local client = vim.lsp.start({
-      name = "jdtls",
-      cmd = {vim.fn.stdpath('data') .. '/jdtls/jdtls', workspace_folder},
-      root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1]) or vim.fn.getcwd(),
-      settings = {
-        java = {
-          -- home = 'E:/java/jdk1.8.0_342',
-          eclipse = {downloadSources = true},
-          maven = {downloadSources = true},
-          gradle = {downloadSources = true},
-          configuration = {
-            updateBuildConfiguration = 'interactive',
-            --[[runtimes = {
-            name = 'JavaSE-8',
-            path = 'E:/java/jdk1.8.0_342',
-            defaults = true
-            },
-            {
-            name = 'JavaSE-18',
-            path = 'E:/java/java18',
-            },
-            {
-            name = 'JavaSE-11',
-            path = 'E:/java/java11'
-            }]]--
+        workspace = {
+          library = {
+            [vim.fn.expand "$VIMRUNTIME/lua"] = true,
+            [vim.fn.expand "$VIMRUNTIME/lua/vim/lsp"] = true,
+            [vim.fn.stdpath "data" .. "/lazy/lazy.nvim/lua/lazy"] = true,
           },
-          implementationsCodeLens = {enabled = true},
-          referencesCodeLens = {enabled = true},
-          references = {includeDecompiledSources = true},
-          maxConcurrentBuilds = 3,
-        },
-        signatureHelp = {enabled = true},
-        completion = {
-          favoriteStaticMembers = {
-            "org.hamcrest.MatcherAssert.assertThat",
-            "org.hamcrest.Matchers.*",
-            "org.hamcrest.CoreMatchers.*",
-            "org.junit.jupiter.api.Assertions.*",
-            "java.util.Objects.requireNonNull",
-            "java.util.Objects.requireNonNullElse",
-            "org.mockito.Mockito.*",
-          },
-          importOrder = {
-            "java",
-            "javax",
-            "com",
-            "org"
-          },
-        },
-        sources = {
-          organizeImports = {
-            starThreshold = 9999,
-            staticStarThreshold = 9999,
-          },
-        },
-        codeGeneration = {
-          toString = {
-            template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
-          },
-          useBlocks = true,
+          maxPreload = 100000,
+          preloadFileSize = 10000,
         },
       },
-    })
-    vim.lsp.buf_attach_client(0, client)
-  end
-})
+    }
+  },
 
-autocmd('FileType', {
-  pattern = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
-  callback = function()
-    local client = vim.lsp.start({
-      name = "typescript-language-server",
-      cmd = {vim.fn.stdpath('data') .. '/tsserver/bin/typescript-language-server', '--stdio'},
-      init_options = {hostInfo = "neovim"},
-    })
+  c = {
+    pattern = {'c', 'cpp'},
+    name = 'clangd',
+    cmd = {'clangd'},
+  },
 
-    vim.lsp.buf_attach_client(0, client)
-  end
-})
+  python = {
+    pattern = {'py', 'python'},
+    name = 'pyright',
+    cmd = {vim.fn.stdpath('data') .. '/pyright/bin/pyright-langserver', '--stdio'},
+  },
+
+  cmake = {
+    pattern = {"cmake", "CMakeLists.txt"},
+    name = 'cmake',
+    cmd = {vim.fn.stdpath('data') .. '/pyright/bin/cmake-language-server'},
+  },
+
+  kotlin = {
+    pattern = {'kotlin'},
+    cmd = {vim.fn.stdpath('data') .. '/kotlin-language-server/bin/kotlin-language-server'},
+    root_dir = vim.fs.dirname(vim.fs.find({'settings.gradle'}, {upward = true})[1]) or vim.fn.getcwd()
+  },
+
+  java = {
+    pattern = {'java'},
+    callback = function()
+      local root_markers = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
+      local root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1])
+      local home = os.getenv('TEMP')
+      local workspace_folder = home .. "/.workspace" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
+      local client = vim.lsp.start({
+        name = "jdtls",
+        cmd = {vim.fn.stdpath('data') .. '/jdtls/jdtls.bat', workspace_folder},
+        root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1]) or vim.fn.getcwd(),
+        settings = {
+          java = {
+            -- home = 'E:/java/jdk1.8.0_342',
+            eclipse = {downloadSources = true},
+            maven = {downloadSources = true},
+            gradle = {downloadSources = true},
+            configuration = {
+              updateBuildConfiguration = 'interactive',
+              --[[runtimes = {
+                name = 'JavaSE-8',
+                path = 'E:/java/jdk1.8.0_342',
+                defaults = true
+              },
+              {
+                name = 'JavaSE-18',
+                path = 'E:/java/java18',
+              },
+              {
+                name = 'JavaSE-11',
+                path = 'E:/java/java11'
+              }]]--
+            },
+            implementationsCodeLens = {enabled = true},
+            referencesCodeLens = {enabled = true},
+            references = {includeDecompiledSources = true},
+            maxConcurrentBuilds = 3,
+          },
+          signatureHelp = {enabled = true},
+          completion = {
+            favoriteStaticMembers = {
+              "org.hamcrest.MatcherAssert.assertThat",
+              "org.hamcrest.Matchers.*",
+              "org.hamcrest.CoreMatchers.*",
+              "org.junit.jupiter.api.Assertions.*",
+              "java.util.Objects.requireNonNull",
+              "java.util.Objects.requireNonNullElse",
+              "org.mockito.Mockito.*",
+            },
+            importOrder = {
+              "java",
+              "javax",
+              "com",
+              "org"
+            },
+          },
+          sources = {
+            organizeImports = {
+              starThreshold = 9999,
+              staticStarThreshold = 9999,
+            },
+          },
+          codeGeneration = {
+            toString = {
+              template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
+            },
+            useBlocks = true,
+          },
+        },
+      })
+      vim.lsp.buf_attach_client(0, client)
+    end
+  },
+
+  javascript_typescript = {
+    pattern = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+    callback = function()
+      local client = vim.lsp.start({
+        name = "typescript-language-server",
+        cmd = {vim.fn.stdpath('data') .. '/tsserver/bin/typescript-language-server', '--stdio'},
+        init_options = {hostInfo = "neovim"},
+      })
+      vim.lsp.buf_attach_client(0, client)
+    end
+  }
+}
+
+for _, config in pairs(lspconfig) do
+  autocmd("FileType", {
+    pattern = config.pattern,
+    callback = config.callback ~= nil and config.callback or function()
+      local client = vim.lsp.start({
+        name = config.name,
+        cmd = config.cmd,
+        settings = config.settings ~= nil and config.settings or {},
+        root_dir = config.root_dir ~= nil and config.root_dir or vim.fn.getcwd(),
+      })
+      vim.lsp.buf_attach_client(0, client)
+    end
+  })
+end

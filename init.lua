@@ -197,9 +197,9 @@ if file ~= nil then
   vim.cmd(':luafile ' .. override_path)
 end
 
-local config_path = vim.fn.getcwd() .. '/.config/config.lua'
+local config_path = vim.fn.getcwd() .. '/.config.lua'
 local config_file = io.open(config_path)
 if config_file ~= nil then
   config_file:close()
-  vim.cmd(':luafile ' .. config_file)
+  vim.cmd(':luafile ' .. config_path)
 end

@@ -171,7 +171,7 @@ vim.cmd[[set grepprg=rg\ --vimgrep]]
 
 -- Make shift plugin manager without installing plugins.
 local paths
-if vim.fn.has("win64") then
+if vim.fn.has("win64") == 1 then
   paths = os.getenv('UserProfile') .. '/AppData/Local/nvim'
 else
   paths = os.getenv('HOME') .. '/.config/nvim'

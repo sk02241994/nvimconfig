@@ -2,24 +2,25 @@ local on_attach = require("plugins.configs.lspconfig").on_attach
 local capabilities = require("plugins.configs.lspconfig").capabilities
 
 local lspconfig = require "lspconfig"
+local coq = require "coq"
 
-lspconfig.tsserver.setup {
+lspconfig.tsserver.setup(coq.lsp_ensure_capabilities({
   filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
   init_options = {hostInfo = "neovim"},
   single_file_support = true,
   capabilities = capabilities,
   on_attach = on_attach,
-}
+}))
 
-lspconfig.clangd.setup {
+lspconfig.clangd.setup(coq.lsp_ensure_capabilities({
   cmd = {"clangd"},
   capabilities = capabilities,
   filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
   single_file_support = true,
   on_attach = on_attach,
-}
+}))
 
-lspconfig.pyright.setup {
+lspconfig.pyright.setup(coq.lsp_ensure_capabilities({
   filetypes = {"python"},
   settings ={
     python = {
@@ -33,29 +34,29 @@ lspconfig.pyright.setup {
   single_file_support = true,
   capabilities = capabilities,
   on_attach = on_attach,
-}
+}))
 
-lspconfig.cmake.setup {
+lspconfig.cmake.setup(coq.lsp_ensure_capabilities({
   filetypes = {"cmake", "CMakeLists.txt"},
   init_options = { buildDirectory = "build" },
   single_file_support = true,
   capabilities = capabilities,
   on_attach = on_attach,
-}
+}))
 
-lspconfig.kotlin_language_server.setup {
+lspconfig.kotlin_language_server.setup(coq.lsp_ensure_capabilities({
   cmd = { vim.fn.stdpath('data') .. '/mason/packages/kotlin-language-server/bin/kotlin-language-server' },
   capabilities = capabilities,
   filetypes = { "kotlin" },
   root_dir = lspconfig.util.root_pattern("settings.gradle"),
   on_attach = on_attach,
-}
+}))
 
 local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
 local root_dir = vim.fs.dirname(vim.fs.find(root_marker)[1])
 local home = os.getenv('TEMP')
 local workspace_folder = home .. "/.workspace" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
-lspconfig.jdtls.setup {
+lspconfig.jdtls.setup(coq.lsp_ensure_capabilities({
   cmd = {vim.fn.stdpath('data') .. '/mason/packages/jdtls/bin/jdtls', workspace_folder},
   filetypes = {'java'},
   capabilities = capabilities,
@@ -89,7 +90,7 @@ lspconfig.jdtls.setup {
       implementationsCodeLens = {enabled = true},
       referencesCodeLens = {enabled = true},
       references = {includeDecompiledSources = true},
-      maxConcurrentBuilds = 3,
+      maxConcurrentBuilds = 10,
     },
     signatureHelp = {enabled = true},
     completion = {
@@ -122,5 +123,5 @@ lspconfig.jdtls.setup {
       useBlocks = true,
     },
   },
-}
+}))
 

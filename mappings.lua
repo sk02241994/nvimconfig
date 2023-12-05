@@ -23,4 +23,15 @@ M.general = {
   }
 }
 
+M.lspconfig = {
+  plugin = true,
+  n = {
+    ['<leader>ds'] = {
+      function ()
+        vim.lsp.buf.document_symbol()
+      end, "LSP Document symbols"
+    }
+  }
+}
+
 return M

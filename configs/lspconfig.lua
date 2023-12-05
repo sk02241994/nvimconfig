@@ -52,8 +52,11 @@ lspconfig.kotlin_language_server.setup {
 }
 
 local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
+local root_dir = vim.fs.dirname(vim.fs.find(root_marker)[1])
+local home = os.getenv('TEMP')
+local workspace_folder = home .. "/.workspace" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
 lspconfig.jdtls.setup {
-  cmd = {vim.fn.stdpath('data') .. '/mason/packages/jdtls/bin/jdtls'},
+  cmd = {vim.fn.stdpath('data') .. '/mason/packages/jdtls/bin/jdtls', workspace_folder},
   filetypes = {'java'},
   capabilities = capabilities,
   on_attach = on_attach,

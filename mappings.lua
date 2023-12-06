@@ -2,6 +2,8 @@ local M = {}
 
 vim.cmd[[set grepprg=rg\ --vimgrep]]
 vim.cmd[[set nowrap]]
+vim.opt.colorcolumn="120"
+vim.opt.cursorcolumn=true
 M.general = {
   n = {
     ['<leader>fg'] = {'<cmd>grep -S "\\b<cword>\\b"<cr>', "Grep word under cursor"},

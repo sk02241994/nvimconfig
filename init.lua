@@ -102,6 +102,7 @@ require('telescope').setup {
   },
 }
 
+vim.keymap.set('n', '<leader>ds', '<cmd>Telescope treesitter<cr>', {desc = 'Telescope treesitter navigation'})
 vim.keymap.set('n', '<leader>t', "<cmd>Telescope<cr>", { desc = 'Open telescope' })
 vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { desc = 'Find file' })
 vim.keymap.set('n', '<leader>fb', require('telescope.builtin').buffers, { desc = 'Show buffers' })

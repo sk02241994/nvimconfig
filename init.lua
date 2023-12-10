@@ -169,38 +169,3 @@ require("interestingwords").setup {
   cancel_color_key = "<leader>K",
 }
 vim.cmd[[set grepprg=rg\ --vimgrep]]
-
--- Make shift plugin manager without installing plugins.
-local paths
-if vim.fn.has("win64") == 1 then
-  paths = os.getenv('UserProfile') .. '/AppData/Local/nvim'
-else
-  paths = os.getenv('HOME') .. '/.config/nvim'
-end
-
-local plugins_path = paths .. '/.plugins'
-local plugins = {}
-if vim.fn.has('win64') then
-  for dir in io.popen("dir \"" .. plugins_path .."\" /b"):lines() do table.insert(plugins, dir) end
-else
-  for dir in io.popen('ls -a "' .. plugins_path .. '"'):lines() do table.insert(plugins, dir) end
-end
-
-for _, k in pairs(plugins) do
-  vim.opt.runtimepath:append(plugins_path .. '/' .. k)
-end
-
--- override config
-local override_path = paths .. '/config.lua'
-local file = io.open(override_path)
-if file ~= nil then
-  file:close()
-  vim.cmd(':luafile ' .. override_path)
-end
-
-local config_path = vim.fn.getcwd() .. '/.config.lua'
-local config_file = io.open(config_path)
-if config_file ~= nil then
-  config_file:close()
-  vim.cmd(':luafile ' .. config_path)
-end

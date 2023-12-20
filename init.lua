@@ -35,7 +35,41 @@ vim.keymap.set('n', '<leader>E', "<cmd>Lexplore<cr>", {desc = 'Explore'})
 vim.keymap.set('n', '<leader>fb', ":buffers<CR>:buffer<Space>", {desc = 'Show buffers'})
 vim.cmd[[set grepprg=rg\ --vimgrep]]
 vim.keymap.set('n', "<leader>fw", ":grep<Space>", {desc = "Find word"})
-vim.keymap.set('n', "<leader>ff", ":e<Space>", {desc = "Find file"})
+-- fuzzy search
+FuzzySearch = function()
+    local width = vim.o.columns - 4
+    local height = 11
+    if (vim.o.columns >= 85) then
+        width = 80
+    end
+    vim.api.nvim_open_win(
+        vim.api.nvim_create_buf(false, true),
+        true,
+        {
+            relative = 'editor',
+            style = 'minimal',
+            border = 'shadow',
+            noautocmd = true,
+            width = width,
+            height = height,
+            col = math.min((vim.o.columns - width) / 2),
+            row = math.min((vim.o.lines - height) / 2 - 1),
+        }
+    )
+    local file = vim.fn.tempname()
+    vim.fn.termopen('fzf > ' .. file, {on_exit = function()
+        vim.api.nvim_command('bdelete!')
+        local f = io.open(file, 'r')
+        local stdout
+        if f ~= nil then
+          stdout = f:read('*all')
+          f:close()
+        end
+        os.remove(file)
+        vim.api.nvim_command('edit ' .. stdout)
+    end})
+end
+vim.keymap.set('n', "<leader>ff", "<cmd>lua FuzzySearch()<cr>", {desc = "Find file"})
 vim.keymap.set('n', "<leader>fg", "<cmd>grep -S \"\\b<cword>\\b\"<cr>", {desc = "Find word under cursor"})
 
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
@@ -365,3 +399,4 @@ for _, config in pairs(lspconfig) do
     end
   })
 end
+

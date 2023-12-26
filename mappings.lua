@@ -20,6 +20,7 @@ M.general = {
           vim.cmd[[copen]]
         end
       end, "Quick fix toggle"},
+    ['<leader>ds'] = {'<cmd>Telescope treesitter<cr>', 'Document treesitter'},
   }
 }
 

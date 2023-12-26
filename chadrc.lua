@@ -1,5 +1,5 @@
 ---@type ChadrcConfig 
  local M = {}
- M.ui = {theme = 'onedark'}
+ M.ui = {theme = 'gruvbox'}
  M.mappings = require "custom.mappings"
  return M

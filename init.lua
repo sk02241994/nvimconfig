@@ -101,8 +101,9 @@ vim.keymap.set('n', '<C-k>', '<C-w>k', {noremap = true})
 vim.keymap.set('n', '<C-j>', '<C-w>j', {noremap = true})
 vim.keymap.set('n', '<C-h>', '<C-w>h', {noremap = true})
 vim.keymap.set('n', '<leader><C-n>', "<cmd>tabnew<cr>", { desc = 'new tab' })
-vim.keymap.set('n', '<tab>', function() vim.cmd.tabnext() end, { desc = 'next tab' })
-vim.keymap.set('n', '<S-tab>', function() vim.cmd.tabprevious() end, { desc = 'previous tab' })
+vim.keymap.set('n', '<tab>', "<cmd>bNext<CR>", { desc = 'next buffer' })
+vim.keymap.set('n', '<S-tab>', '<cmd>bprevious<CR>', { desc = 'previous buffer' })
+vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>', {desc = 'Buffer delete'})
 
 require('telescope').setup {
   defaults = {

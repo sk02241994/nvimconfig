@@ -147,7 +147,7 @@ require("telescope").setup {
 vim.api.nvim_set_keymap("n", "<space>E", "<cmd>NvimTreeToggle<cr>", { noremap = true })
 
 vim.o.background = "dark"
-vim.cmd("colorscheme nordfox")
+vim.cmd("colorscheme carbonfox")
 
 require('lualine').setup({})
 

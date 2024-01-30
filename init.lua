@@ -40,7 +40,7 @@ require("lazy").setup({
       require("nvim-tree").setup({})
     end,
   },
-  { "EdenEast/nightfox.nvim" },
+  {'Mofiqul/vscode.nvim'},
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' }
@@ -146,7 +146,7 @@ require("telescope").setup {
 vim.api.nvim_set_keymap("n", "<space>E", "<cmd>NvimTreeToggle<cr>", { noremap = true })
 
 vim.o.background = "dark"
-vim.cmd("colorscheme nordfox")
+require('vscode').load()
 
 require('lualine').setup({})
 

@@ -41,10 +41,6 @@ require("lazy").setup({
     end,
   },
   { 'Mofiqul/vscode.nvim', priority = 1000 },
-  {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' }
-  },
   {'kdheepak/lazygit.nvim'},
   {'Mr-LLLLL/interestingwords.nvim'},
   {
@@ -73,7 +69,6 @@ require("lazy").setup({
       'saadparwaiz1/cmp_luasnip',
     },
   },
-  {'arkav/lualine-lsp-progress'},
   {'ms-jpq/coq_nvim'},
   { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {},
   config = function()
@@ -400,73 +395,126 @@ cmp.setup {
   }
 }
 
--- lsp progress
--- Color for highlights
-local colors = {
-  yellow = '#ECBE7B',
-  cyan = '#008080',
-  darkblue = '#081633',
-  green = '#98be65',
-  orange = '#FF8800',
-  violet = '#a9a1e1',
-  magenta = '#c678dd',
-  blue = '#51afef',
-  red = '#ec5f67'
+-- status line
+local modes = {
+  ["n"] = "NORMAL",
+  ["no"] = "NORMAL",
+  ["v"] = "VISUAL",
+  ["V"] = "VISUAL LINE",
+  [""] = "VISUAL BLOCK",
+  ["s"] = "SELECT",
+  ["S"] = "SELECT LINE",
+  [""] = "SELECT BLOCK",
+  ["i"] = "INSERT",
+  ["ic"] = "INSERT",
+  ["R"] = "REPLACE",
+  ["Rv"] = "VISUAL REPLACE",
+  ["c"] = "COMMAND",
+  ["cv"] = "VIM EX",
+  ["ce"] = "EX",
+  ["r"] = "PROMPT",
+  ["rm"] = "MOAR",
+  ["r?"] = "CONFIRM",
+  ["!"] = "SHELL",
+  ["t"] = "TERMINAL",
 }
 
-local config = {
-  options = {
-    icons_enabled = true,
-    -- component_separators = {'', ''},
-    -- section_separators = {'', ''},
-    disabled_filetypes = {}
-  },
-  sections = {
-    lualine_a = {'mode'},
-    lualine_b = {'filename'},
-    lualine_c = {},
-    lualine_x = {},
-    lualine_y = {'encoding', 'fileformat', 'filetype'},
-    lualine_z = {'branch'},
-  },
-  inactive_sections = {
-    lualine_a = {},
-    lualine_b = {},
-    lualine_c = {'filename'},
-    lualine_x = {'location'},
-    lualine_y = {},
-    lualine_z = {}
-  },
-  tabline = {},
-  extensions = {}
-}
-
--- Inserts a component in lualine_c at left section
-local function ins_left(component)
-  table.insert(config.sections.lualine_c, component)
+local function mode()
+  local current_mode = vim.api.nvim_get_mode().mode
+  return string.format(" %s ", modes[current_mode]):upper()
 end
 
-ins_left {
-  'lsp_progress',
-  colors = {
-    percentage  = colors.cyan,
-    title  = colors.cyan,
-    message  = colors.cyan,
-    spinner = colors.cyan,
-    lsp_client_name = colors.magenta,
-    use = true,
-  },
-  separators = {
-    component = ' ',
-    progress = ' | ',
-    percentage = { pre = '', post = '%% ' },
-    title = { pre = '', post = ': ' },
-    lsp_client_name = { pre = '[', post = ']' },
-    spinner = { pre = '', post = '' },
-    message = { commenced = 'In Progress', completed = 'Completed' },
-  },
-  display_components = { 'lsp_client_name', 'spinner', { 'title', 'percentage', 'message' } },
-  timer = { progress_enddelay = 500, spinner = 1000, lsp_client_name_enddelay = 1000 },
-  spinner_symbols = { '🌑 ', '🌒 ', '🌓 ', '🌔 ', '🌕 ', '🌖 ', '🌗 ', '🌘 ' },
-}
-require('lualine').setup(config)
+local function update_mode_colors()
+  local current_mode = vim.api.nvim_get_mode().mode
+  local mode_color = "%#StatusLineAccent#"
+  if current_mode == "n" then
+      mode_color = "%#StatuslineAccent#"
+  elseif current_mode == "i" or current_mode == "ic" then
+      mode_color = "%#StatuslineInsertAccent#"
+  elseif current_mode == "v" or current_mode == "V" or current_mode == "" then
+      mode_color = "%#StatuslineVisualAccent#"
+  elseif current_mode == "R" then
+      mode_color = "%#StatuslineReplaceAccent#"
+  elseif current_mode == "c" then
+      mode_color = "%#StatuslineCmdLineAccent#"
+  elseif current_mode == "t" then
+      mode_color = "%#StatuslineTerminalAccent#"
+  end
+  return mode_color
+end
+
+local function filepath()
+  local fpath = vim.fn.fnamemodify(vim.fn.expand "%", ":~:.:h")
+  if fpath == "" or fpath == "." then
+      return " "
+  end
+
+  return string.format(" %%<%s/", fpath)
+end
+
+local function filename()
+  local fname = vim.fn.expand "%:t"
+  if fname == "" then
+      return ""
+  end
+  return fname .. " "
+end
+
+local function filetype()
+  return string.format(" %s ", vim.bo.filetype):upper()
+end
+
+local function lineinfo()
+  if vim.bo.filetype == "alpha" then
+    return ""
+  end
+  return " %P %l:%c "
+end
+
+local function lsp_progress ()
+  local lsp = vim.lsp.util.get_progress_messages()[1]
+  if lsp then
+    local name = lsp.name or ""
+    local msg = lsp.message or ""
+    local percentage = lsp.percentage or 0
+    local title = lsp.title or ""
+    return string.format(" %%<%s: %s %s (%s%%%%) ", name, title, msg, percentage)
+  end
+
+  return ""
+end
+
+Statusline = {}
+
+Statusline.active = function()
+  return table.concat {
+    "%#Statusline#",
+    update_mode_colors(),
+    mode(),
+    "%#Normal# ",
+    filepath(),
+    filename(),
+    lsp_progress(),
+    "%#Normal#",
+    "%=%#StatusLineExtra#",
+    filetype(),
+    lineinfo(),
+  }
+end
+
+function Statusline.inactive()
+  return " %F"
+end
+
+function Statusline.short()
+  return "%#StatusLineNC#   NvimTree"
+end
+
+vim.api.nvim_exec([[
+  augroup Statusline
+  au!
+  au WinEnter,BufEnter * setlocal statusline=%!v:lua.Statusline.active()
+  au WinLeave,BufLeave * setlocal statusline=%!v:lua.Statusline.inactive()
+  au WinEnter,BufEnter,FileType NvimTree setlocal statusline=%!v:lua.Statusline.short()
+  augroup END
+]], false)

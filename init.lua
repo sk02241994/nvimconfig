@@ -60,16 +60,6 @@ require("lazy").setup({
       'williamboman/mason-lspconfig.nvim',
     },
   },
-  {
-    'hrsh7th/nvim-cmp',
-    dependencies = {
-      'hrsh7th/cmp-nvim-lsp',
-      'L3MON4D3/LuaSnip',
-      'rafamadriz/friendly-snippets',
-      'saadparwaiz1/cmp_luasnip',
-    },
-  },
-  {'ms-jpq/coq_nvim'},
   { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {},
   config = function()
     require("ibl").setup {scope = {enabled = true}}
@@ -213,12 +203,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 --lspconfig
 -- can look more into specific configs from this website https://www.andersevenrud.net/neovim.github.io/lsp/configurations/
 local lspconfig = require('lspconfig')
-local coq = require('coq')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = false
 
-lspconfig.lua_ls.setup(coq.lsp_ensure_capabilities({
+lspconfig.lua_ls.setup({
   cmd = {vim.fn.stdpath('data') .. '/mason/packages/lua-language-server/lua-language-server'},
   capabilities = capabilities,
   settings = {
@@ -238,24 +225,24 @@ lspconfig.lua_ls.setup(coq.lsp_ensure_capabilities({
       },
     },
   },
-}))
+})
 
-lspconfig.tsserver.setup(coq.lsp_ensure_capabilities({
+lspconfig.tsserver.setup({
   cmd = {vim.fn.stdpath('data') .. '/mason/packages/typescript-language-server/node_modules/.bin/typescript-language-server', '--stdio'},
   filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
   init_options = {hostInfo = "neovim"},
   single_file_support = true,
   capabilities = capabilities,
-}))
+})
 
-lspconfig.clangd.setup (coq.lsp_ensure_capabilities({
+lspconfig.clangd.setup ({
   cmd = {'clangd'},
   capabilities = capabilities,
   filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
   single_file_support = true,
-}))
+})
 
-lspconfig.pyright.setup(coq.lsp_ensure_capabilities({
+lspconfig.pyright.setup({
   cmd = {vim.fn.stdpath('data') .. '/mason/packages/pyright/node_modules/.bin/pyright-langserver', '--stdio'},
   filetypes = {"python"},
   settings ={
@@ -269,18 +256,18 @@ lspconfig.pyright.setup(coq.lsp_ensure_capabilities({
   },
   single_file_support = true,
   capabilities = capabilities,
-}))
+})
 
-lspconfig.cmake.setup(coq.lsp_ensure_capabilities({
+lspconfig.cmake.setup({
   cmd = {vim.fn.stdpath('data') .. '/mason/packages/cmake-language-server/venv/bin/cmake-language-server'},
   filetypes = {"cmake", "CMakeLists.txt"},
   init_options = { buildDirectory = "build" },
   single_file_support = true,
   capabilities = capabilities,
-}))
+})
 
 local root_files = {'settings.gradle'}
-lspconfig.kotlin_language_server.setup(coq.lsp_ensure_capabilities({
+lspconfig.kotlin_language_server.setup({
   cmd = { vim.fn.stdpath('data') .. '/mason/packages/kotlin-language-server/bin/kotlin-language-server'},
   capabilities = capabilities,
   filetypes = { "kotlin" },
@@ -288,14 +275,12 @@ lspconfig.kotlin_language_server.setup(coq.lsp_ensure_capabilities({
     return lspconfig.util.root_pattern(vim.fs.find(root_files))(fname) or vim.fn.getcwd()
   end,
   single_file_support = true,
-}))
+})
 
 local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
 local root_dir = vim.fs.dirname(vim.fs.find(root_marker)[1])
-local home = os.getenv('TEMP')
-local workspace_folder = home .. "/.workspace" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
-lspconfig.jdtls.setup(coq.lsp_ensure_capabilities({
-  cmd = {vim.fn.stdpath('data') .. '/mason/packages/jdtls/bin/jdtls', workspace_folder},
+lspconfig.jdtls.setup({
+  cmd = {vim.fn.stdpath('data') .. '/mason/packages/jdtls/bin/jdtls'},
   filetypes = {'java'},
   capabilities = capabilities,
   single_file_support = true,
@@ -360,41 +345,7 @@ lspconfig.jdtls.setup(coq.lsp_ensure_capabilities({
       useBlocks = true,
     },
   },
-}))
-
--- cmp
-
-local cmp = require 'cmp'
-local luasnip = require 'luasnip'
-require('luasnip.loaders.from_vscode').lazy_load()
-luasnip.config.setup {}
-
-cmp.setup {
-  snippet = {
-    expand = function(args)
-      luasnip.lsp_expand(args.body)
-    end,
-  },
-  sources = {
-    {name = 'nvim_lsp'},
-    {name = 'luasnip'}
-  },
-  mapping = cmp.mapping.preset.insert {
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<CR>'] =cmp.mapping({
-      i = function(fallback)
-        if cmp.visible() and cmp.get_active_entry() then
-          cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
-        else
-          fallback()
-        end
-      end,
-      s = cmp.mapping.confirm({ select = true }),
-      c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
-    }),
-  }
-}
+})
 
 -- status line
 local modes = {

@@ -10,7 +10,6 @@ local plugins = {
       require "custom.configs.lspconfig"
     end,
   },
-  {'ms-jpq/coq_nvim'},
 }
 
 return plugins

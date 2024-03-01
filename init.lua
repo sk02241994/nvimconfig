@@ -64,6 +64,12 @@ require("lazy").setup({
   config = function()
     require("ibl").setup {scope = {enabled = true}}
   end },
+  {
+    'hrsh7th/nvim-cmp',
+    dependencies = {
+      'hrsh7th/cmp-nvim-lsp',
+    },
+  },
 })
 
 vim.o.hlsearch = true
@@ -204,6 +210,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
 -- can look more into specific configs from this website https://www.andersevenrud.net/neovim.github.io/lsp/configurations/
 local lspconfig = require('lspconfig')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').default_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = false
 
 lspconfig.lua_ls.setup({
   cmd = {vim.fn.stdpath('data') .. '/mason/packages/lua-language-server/lua-language-server'},
@@ -280,7 +288,7 @@ lspconfig.kotlin_language_server.setup({
 local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
 local root_dir = vim.fs.dirname(vim.fs.find(root_marker)[1])
 lspconfig.jdtls.setup({
-  cmd = {vim.fn.stdpath('data') .. '/mason/packages/jdtls/bin/jdtls'},
+  cmd = {vim.fn.stdpath('data') .. '/mason/packages/jdtls/bin/jdtls', '.workspace' .. vim.fn.fnamemodify(vim.fs.dirname(vim.fs.find(root_marker)[1]), ':p:h:t')},
   filetypes = {'java'},
   capabilities = capabilities,
   single_file_support = true,
@@ -346,6 +354,29 @@ lspconfig.jdtls.setup({
     },
   },
 })
+
+--cmp
+local cmp = require 'cmp'
+cmp.setup {
+  sources = {
+    {name = 'nvim_lsp'},
+  },
+  mapping = cmp.mapping.preset.insert {
+    ['<C-n>'] = cmp.mapping.select_next_item(),
+    ['<C-p>'] = cmp.mapping.select_prev_item(),
+    ['<CR>'] =cmp.mapping({
+      i = function(fallback)
+        if cmp.visible() and cmp.get_active_entry() then
+          cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+        else
+          fallback()
+        end
+      end,
+      s = cmp.mapping.confirm({ select = true }),
+      c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
+    }),
+  }
+}
 
 -- status line
 local modes = {

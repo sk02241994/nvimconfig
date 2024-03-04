@@ -70,6 +70,7 @@ require("lazy").setup({
       'hrsh7th/cmp-nvim-lsp',
     },
   },
+  {'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
 })
 
 vim.o.hlsearch = true
@@ -152,6 +153,9 @@ vim.api.nvim_set_keymap("n", "<space>E", "<cmd>NvimTreeToggle<cr>", { noremap = 
 
 vim.o.background = "dark"
 require('vscode').load()
+
+vim.opt.termguicolors = true
+require("bufferline").setup{}
 
 require'nvim-treesitter.configs'.setup {
   sync_install = false,

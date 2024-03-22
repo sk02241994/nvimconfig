@@ -95,6 +95,10 @@ vim.keymap.set('n', '<leader><C-n>', "<cmd>tabnew<cr>", { desc = 'new tab' })
 vim.keymap.set('n', '<tab>', "<cmd>bn<CR>", { desc = 'next buffer' })
 vim.keymap.set('n', '<S-tab>', '<cmd>bp<CR>', { desc = 'previous buffer' })
 vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>', {desc = 'Buffer delete'})
+vim.keymap.set('n', '<a-up>', '<c-w>+', {desc = 'resize height increase'})
+vim.keymap.set('n', '<a-down>', '<c-w>-', {desc = 'resize height decrease'})
+vim.keymap.set('n', '<a-left>', '<c-w>>', {desc = 'resize width increase'})
+vim.keymap.set('n', '<a-right>', '<c-w><', {desc = 'resiez width decrease'})
 
 require('telescope').setup {
   defaults = {

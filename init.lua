@@ -102,8 +102,20 @@ vim.keymap.set('n', '<a-right>', '<c-w><', {desc = 'resiez width decrease'})
 
 require('telescope').setup {
   defaults = {
+    borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+    color_devicons = true,
+    prompt_prefix = "   ",
     layout_config = {
-      preview_width=0.5,
+      horizontal = {
+        prompt_position = "top",
+        preview_width = 0.55,
+      },
+      vertical = {
+        mirror = false,
+      },
+      width = 0.87,
+      height = 0.80,
+      preview_cutoff = 120,
     },
     mappings = {
       i = {
@@ -111,6 +123,10 @@ require('telescope').setup {
         ['<C-d>'] = false,
       },
     },
+    set_env = { ["COLORTERM"] = "truecolor" }, -- default = nil,
+    file_previewer = require("telescope.previewers").vim_buffer_cat.new,
+    grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
+    qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
   },
 }
 

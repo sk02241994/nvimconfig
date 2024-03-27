@@ -176,7 +176,16 @@ require('vscode').load()
 vim.opt.termguicolors = true
 require("bufferline").setup{}
 
-require('lualine').setup({})
+require('lualine').setup({
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch', 'diff'},
+    lualine_c = {{'filename', path = 1}},
+    lualine_x = {'encoding', 'fileformat', 'filetype'},
+    lualine_y = {'progress'},
+    lualine_z = {'location'}
+  },
+})
 
 require'nvim-treesitter.configs'.setup {
   sync_install = false,

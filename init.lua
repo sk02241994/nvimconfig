@@ -53,13 +53,7 @@ require("lazy").setup({
     opts = {}
   },
   { 'skywind3000/asyncrun.vim' },
-  {
-    'neovim/nvim-lspconfig',
-    dependencies = {
-      { 'williamboman/mason.nvim', config = true },
-      'williamboman/mason-lspconfig.nvim',
-    },
-  },
+  { 'neovim/nvim-lspconfig' },
   { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {},
   config = function()
     require("ibl").setup {scope = {enabled = true}}
@@ -242,7 +236,7 @@ capabilities = require('cmp_nvim_lsp').default_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = false
 
 lspconfig.lua_ls.setup({
-  cmd = {vim.fn.stdpath('data') .. '/mason/packages/lua-language-server/lua-language-server'},
+  cmd = {'lua-language-server'},
   capabilities = capabilities,
   settings = {
     Lua = {
@@ -264,7 +258,7 @@ lspconfig.lua_ls.setup({
 })
 
 lspconfig.tsserver.setup({
-  cmd = {vim.fn.stdpath('data') .. '/mason/packages/typescript-language-server/node_modules/.bin/typescript-language-server', '--stdio'},
+  cmd = {'typescript-language-server', '--stdio'},
   filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
   init_options = {hostInfo = "neovim"},
   single_file_support = true,
@@ -279,7 +273,7 @@ lspconfig.clangd.setup ({
 })
 
 lspconfig.pyright.setup({
-  cmd = {vim.fn.stdpath('data') .. '/mason/packages/pyright/node_modules/.bin/pyright-langserver', '--stdio'},
+  cmd = {'pyright-langserver', '--stdio'},
   filetypes = {"python"},
   settings ={
     python = {
@@ -295,7 +289,7 @@ lspconfig.pyright.setup({
 })
 
 lspconfig.cmake.setup({
-  cmd = {vim.fn.stdpath('data') .. '/mason/packages/cmake-language-server/venv/bin/cmake-language-server'},
+  cmd = {'cmake-language-server'},
   filetypes = {"cmake", "CMakeLists.txt"},
   init_options = { buildDirectory = "build" },
   single_file_support = true,
@@ -304,7 +298,7 @@ lspconfig.cmake.setup({
 
 local root_files = {'settings.gradle'}
 lspconfig.kotlin_language_server.setup({
-  cmd = { vim.fn.stdpath('data') .. '/mason/packages/kotlin-language-server/bin/kotlin-language-server'},
+  cmd = {'kotlin-language-server'},
   capabilities = capabilities,
   filetypes = { "kotlin" },
   root_dir = function (fname)
@@ -316,7 +310,7 @@ lspconfig.kotlin_language_server.setup({
 local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
 local root_dir = vim.fs.dirname(vim.fs.find(root_marker)[1]) or vim.fn.getcwd()
 lspconfig.jdtls.setup({
-  cmd = {vim.fn.stdpath('data') .. '/mason/packages/jdtls/bin/jdtls', '.workspace' .. vim.fn.fnamemodify(vim.fs.dirname(vim.fs.find(root_marker)[1]), ':p:h:t')},
+  cmd = {'jdtls', '.workspace' .. vim.fn.fnamemodify(vim.fs.dirname(vim.fs.find(root_marker)[1]), ':p:h:t')},
   filetypes = {'java'},
   capabilities = capabilities,
   single_file_support = true,

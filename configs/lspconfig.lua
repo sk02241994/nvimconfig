@@ -4,6 +4,7 @@ local capabilities = require("plugins.configs.lspconfig").capabilities
 local lspconfig = require "lspconfig"
 
 lspconfig.tsserver.setup({
+  cmd = {'typescript-language-server', '--stdio'},
   filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
   init_options = {hostInfo = "neovim"},
   single_file_support = true,
@@ -20,6 +21,7 @@ lspconfig.clangd.setup({
 })
 
 lspconfig.pyright.setup({
+  cmd = {'pyright-langserver', '--stdio'},
   filetypes = {"python"},
   settings ={
     python = {
@@ -36,6 +38,7 @@ lspconfig.pyright.setup({
 })
 
 lspconfig.cmake.setup({
+  cmd = {'cmake-language-server'},
   filetypes = {"cmake", "CMakeLists.txt"},
   init_options = { buildDirectory = "build" },
   single_file_support = true,
@@ -44,7 +47,7 @@ lspconfig.cmake.setup({
 })
 
 lspconfig.kotlin_language_server.setup({
-  cmd = { vim.fn.stdpath('data') .. '/mason/packages/kotlin-language-server/bin/kotlin-language-server' },
+  cmd = { 'kotlin-language-server' },
   capabilities = capabilities,
   filetypes = { "kotlin" },
   root_dir = lspconfig.util.root_pattern("settings.gradle"),
@@ -53,7 +56,7 @@ lspconfig.kotlin_language_server.setup({
 
 local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
 lspconfig.jdtls.setup({
-  cmd = {vim.fn.stdpath('data') .. '/mason/packages/jdtls/bin/jdtls', '.workspace' .. vim.fn.fnamemodify(vim.fs.dirname(vim.fs.find(root_marker)[1]), ':p:h:t')},
+  cmd = {'jdtls', '.workspace' .. vim.fn.fnamemodify(vim.fs.dirname(vim.fs.find(root_marker)[1]), ':p:h:t')},
   filetypes = {'java'},
   capabilities = capabilities,
   on_attach = on_attach,

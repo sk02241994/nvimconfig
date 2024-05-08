@@ -206,7 +206,10 @@ require("interestingwords").setup {
   color_key = "<leader>k",
   cancel_color_key = "<leader>K",
 }
-vim.cmd[[set grepprg=rg\ --vimgrep]]
+vim.cmd[[
+set grepprg=rg\ --vimgrep
+highlight NORMAL guibg=NONE ctermbg=NONE
+]]
 
 local cmp = require('cmp')
 cmp.setup {

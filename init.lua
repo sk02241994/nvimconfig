@@ -260,7 +260,7 @@ local lspconfig = {
   lua = {
     pattern = {'lua'},
     name = "lua_ls",
-    cmd = {vim.fn.stdpath('data') .. '/lua/bin/lua-language-server'},
+    cmd = {'lua-language-server'},
     settings = {
       Lua = {
         diagnostics = {
@@ -288,18 +288,27 @@ local lspconfig = {
   python = {
     pattern = {'py', 'python'},
     name = 'pyright',
-    cmd = {vim.fn.stdpath('data') .. '/pyright/bin/pyright-langserver', '--stdio'},
+    cmd = {'pyright-langserver', '--stdio'},
+    settings ={
+      python = {
+        analysis = {
+          autoSearchPaths = true,
+          diagnosticMode = "openFilesOnly",
+          useLibraryCodeForTypes = true
+        }
+      }
+    },
   },
 
   cmake = {
     pattern = {"cmake", "CMakeLists.txt"},
     name = 'cmake',
-    cmd = {vim.fn.stdpath('data') .. '/pyright/bin/cmake-language-server'},
+    cmd = {'cmake-language-server'},
   },
 
   kotlin = {
     pattern = {'kotlin'},
-    cmd = {vim.fn.stdpath('data') .. '/kotlin-language-server/bin/kotlin-language-server'},
+    cmd = {'kotlin-language-server'},
     root_dir = vim.fs.dirname(vim.fs.find({'settings.gradle'}, {upward = true})[1]) or vim.fn.getcwd()
   },
 
@@ -308,11 +317,10 @@ local lspconfig = {
     callback = function()
       local root_markers = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
       local root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1])
-      local home = os.getenv('TEMP')
-      local workspace_folder = home .. "/.workspace" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
+      local workspace_folder = "/.workspace" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
       local client = vim.lsp.start({
         name = "jdtls",
-        cmd = {vim.fn.stdpath('data') .. '/jdtls/jdtls', workspace_folder},
+        cmd = {'jdtls', workspace_folder},
         root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1]) or vim.fn.getcwd(),
         settings = {
           java = {
@@ -382,7 +390,7 @@ local lspconfig = {
     callback = function()
       local client = vim.lsp.start({
         name = "typescript-language-server",
-        cmd = {vim.fn.stdpath('data') .. '/tsserver/bin/typescript-language-server', '--stdio'},
+        cmd = {'typescript-language-server', '--stdio'},
         init_options = {hostInfo = "neovim"},
       })
       vim.lsp.buf_attach_client(0, client)

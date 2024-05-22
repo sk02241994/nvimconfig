@@ -68,7 +68,8 @@ require("lazy").setup({
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' }
-  }
+  },
+  { 'arkav/lualine-lsp-progress' },
 })
 
 vim.o.hlsearch = true
@@ -303,15 +304,15 @@ lspconfig.kotlin_language_server.setup({
   capabilities = capabilities,
   filetypes = { "kotlin" },
   root_dir = function (fname)
-    return lspconfig.util.root_pattern(vim.fs.find(root_files))(fname) or vim.fn.getcwd()
+    return lspconfig.util.root_pattern(vim.fs.find(root_files, {}))(fname) or vim.fn.getcwd()
   end,
   single_file_support = true,
 })
 
 local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
-local root_dir = vim.fs.dirname(vim.fs.find(root_marker)[1]) or vim.fn.getcwd()
+local root_dir = vim.fs.dirname(vim.fs.find(root_marker, {})[1]) or vim.fn.getcwd()
 lspconfig.jdtls.setup({
-  cmd = {'jdtls', '.workspace' .. vim.fn.fnamemodify(vim.fs.dirname(vim.fs.find(root_marker)[1]), ':p:h:t')},
+  cmd = {'jdtls', '.workspace' .. vim.fn.fnamemodify(vim.fs.dirname(vim.fs.find(root_marker, {})[1]), ':p:h:t')},
   filetypes = {'java'},
   capabilities = capabilities,
   single_file_support = true,
@@ -401,19 +402,6 @@ cmp.setup {
   }
 }
 
-local function lsp_progress ()
-  local lsp = vim.lsp.util.get_progress_messages()[1]
-  if lsp then
-    local name = lsp.name or ""
-    local msg = lsp.message or ""
-    local percentage = lsp.percentage or 0
-    local title = lsp.title or ""
-    return string.format(" %%<%s: %s %s (%s%%%%) ", name, title, msg, percentage)
-  end
-
-  return ""
-end
-
 require('lualine').setup({
   options = {
     icons_enabled = true,
@@ -422,7 +410,7 @@ require('lualine').setup({
   sections = {
     lualine_a = {'mode'},
     lualine_b = {'branch', 'diff', 'diagnostics'},
-    lualine_c = {{'filename', path = 1}, function() return lsp_progress() end},
+    lualine_c = {{'filename', path = 1}, 'lsp_progress'},
     lualine_x = {'encoding', 'fileformat', 'filetype'},
     lualine_y = {'progress'},
     lualine_z = {'location'}

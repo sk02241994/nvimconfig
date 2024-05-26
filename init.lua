@@ -177,23 +177,11 @@ require('vscode').load()
 vim.opt.termguicolors = true
 require("bufferline").setup{}
 
-local function lsp_progress ()
-  local lsp = vim.lsp.util.get_progress_messages()[1]
-  if lsp then
-    local name = lsp.name or ""
-    local msg = lsp.message or ""
-    local percentage = lsp.percentage or 0
-    local title = lsp.title or ""
-    return name .. ': ' .. title .. " " .. msg .. " " .. percentage .. '%%'
-  end
-  return ""
-end
-
 require('lualine').setup({
   sections = {
     lualine_a = {'mode'},
     lualine_b = {'branch', 'diff'},
-    lualine_c = {{'filename', path = 1}, function() return lsp_progress() end},
+    lualine_c = {{'filename', path = 1}},
     lualine_x = {'encoding', 'fileformat', 'filetype'},
     lualine_y = {'progress'},
     lualine_z = {'location'}

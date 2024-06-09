@@ -82,7 +82,6 @@ vim.o.smartcase = true
 vim.o.updatetime = 250
 vim.wo.signcolumn = 'yes'
 vim.o.termguicolors = true
-vim.wo.relativenumber = true
 vim.opt.listchars = 'space:.,eol:$,tab:>>'
 vim.opt.list = true
 vim.o.completeopt = 'menuone,noselect'

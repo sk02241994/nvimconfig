@@ -58,5 +58,35 @@ vim.opt.termguicolors = true
 vim.cmd[[
 set grepprg=rg\ --vimgrep
 highlight NORMAL guibg=NONE ctermbg=NONE
-set statusline=%m\ %F%<\ %=[bufno:\ %n]:%y[%l:%c\ of\ %L\ %p%%]
 ]]
+
+function get_mode()
+  local mode_map = {
+    n = 'Normal',
+    i = 'Insert',
+    v = 'Visual',
+    [''] = 'V-Line',
+    V = 'V-Line',
+    c = 'Command',
+    no = 'Operator Pending',
+    s = 'Select',
+    S = 'S-Line',
+    [''] = 'S-Block',
+    R = 'Replace',
+    Rv = 'V-Replace',
+    t = 'Terminal'
+  }
+  local current_mode = vim.api.nvim_get_mode().mode
+  return mode_map[current_mode] or current_mode
+end
+
+function get_git_branch()
+  local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
+  if branch ~= "" then
+    return '[' .. string.gsub(branch, "%s+", "") .. ']'
+  else
+    return ""
+  end
+end
+
+vim.opt.statusline = "%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %F%< %=[bufno: %n]:%y[%l:%c of %L %p%%]"

@@ -129,7 +129,7 @@ vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { des
 vim.keymap.set('n', '<leader>fb', require('telescope.builtin').buffers, { desc = 'Show buffers' })
 vim.keymap.set('n', '<leader>fw', require('telescope.builtin').live_grep, { desc = 'Live grep' })
 vim.keymap.set('n', '<leader>fW', function() require('telescope').extensions.live_grep_args.live_grep_args() end, { desc = 'Live grep with args' })
-vim.keymap.set('n', "<leader>fg", "<cmd>grep -S \"\\b<cword>\\b\"<cr>", {desc = "Find word under cursor"})
+vim.keymap.set('n', "<leader>fg", "<cmd>grep -s -w \"<cword>\"<cr>", {desc = "Find word under cursor"})
 vim.keymap.set('n', '<leader>fz', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find({fuzzy = false})

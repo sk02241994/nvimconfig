@@ -41,10 +41,6 @@ require("lazy").setup({
     end,
   },
   {'Mofiqul/vscode.nvim'},
-  {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' }
-  },
   {'kdheepak/lazygit.nvim'},
   {'Mr-LLLLL/interestingwords.nvim'},
   {
@@ -176,17 +172,6 @@ require('vscode').load()
 vim.opt.termguicolors = true
 require("bufferline").setup{}
 
-require('lualine').setup({
-  sections = {
-    lualine_a = {'mode'},
-    lualine_b = {'branch', 'diff'},
-    lualine_c = {{'filename', path = 1}},
-    lualine_x = {'encoding', 'fileformat', 'filetype'},
-    lualine_y = {'progress'},
-    lualine_z = {'location'}
-  },
-})
-
 require'nvim-treesitter.configs'.setup {
   sync_install = false,
   auto_install = true,
@@ -239,3 +224,33 @@ cmp.setup {
   }
 }
 
+function get_mode()
+  local mode_map = {
+    n = 'Normal',
+    i = 'Insert',
+    v = 'Visual',
+    [''] = 'V-Line',
+    V = 'V-Line',
+    c = 'Command',
+    no = 'Operator Pending',
+    s = 'Select',
+    S = 'S-Line',
+    [''] = 'S-Block',
+    R = 'Replace',
+    Rv = 'V-Replace',
+    t = 'Terminal'
+  }
+  local current_mode = vim.api.nvim_get_mode().mode
+  return mode_map[current_mode] or current_mode
+end
+
+function get_git_branch()
+  local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
+  if branch ~= "" then
+    return '[' .. string.gsub(branch, "%s+", "") .. ']'
+  else
+    return ""
+  end
+end
+
+vim.opt.statusline = "%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %F%< %=[bufno: %n]:%y[%l:%c of %L %p%%]"

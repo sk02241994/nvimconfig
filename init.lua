@@ -65,11 +65,6 @@ require("lazy").setup({
     },
   },
   {'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
-  {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' }
-  },
-  { 'arkav/lualine-lsp-progress' },
 })
 
 vim.o.hlsearch = true
@@ -197,8 +192,6 @@ require("interestingwords").setup {
 vim.cmd[[set grepprg=rg\ --vimgrep]]
 
 -- Lsp config
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
@@ -401,17 +394,58 @@ cmp.setup {
   }
 }
 
-require('lualine').setup({
-  options = {
-    icons_enabled = true,
-    theme = 'auto',
-  },
-  sections = {
-    lualine_a = {'mode'},
-    lualine_b = {'branch', 'diff', 'diagnostics'},
-    lualine_c = {{'filename', path = 1}, 'lsp_progress'},
-    lualine_x = {'encoding', 'fileformat', 'filetype'},
-    lualine_y = {'progress'},
-    lualine_z = {'location'}
-  },
-})
+function get_mode()
+  local mode_map = {
+    n = 'Normal',
+    i = 'Insert',
+    v = 'Visual',
+    [''] = 'V-Line',
+    V = 'V-Line',
+    c = 'Command',
+    no = 'Operator Pending',
+    s = 'Select',
+    S = 'S-Line',
+    R = 'Replace',
+    Rv = 'V-Replace',
+    t = 'Terminal'
+  }
+  local current_mode = vim.api.nvim_get_mode().mode
+  return mode_map[current_mode] or current_mode
+end
+
+function get_git_branch()
+  local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
+  if branch ~= "" then
+    return '[' .. string.gsub(branch, "%s+", "") .. ']'
+  else
+    return ""
+  end
+end
+
+function lsp_status()
+  local clients = vim.lsp.get_clients({bufnr = vim.api.nvim_get_current_buf()})
+  local messages = {}
+  for _, client in ipairs(clients) do
+    table.insert(messages, string.format('%s', client.name))
+    table.insert(messages, string.format('%s', vim.lsp.status()))
+  end
+  return table.concat(messages, ' ')
+end
+
+function lsp_diagnostic_count()
+  local counts = {
+    error = 0,
+    warn = 0,
+    info = 0,
+    hint = 0,
+  }
+  for _, diagnostic in ipairs(vim.diagnostic.get(vim.api.nvim_get_current_buf(), {
+    severity = { vim.diagnostic.severity.ERROR, vim.diagnostic.severity.WARN, vim.diagnostic.severity.INFO, vim.diagnostic.severity.HINT }
+  })) do
+    local severity = string.lower(vim.diagnostic.severity[diagnostic.severity])
+    counts[severity] = counts[severity] + 1
+  end
+  return string.format('E:%d W:%d I:%d H:%d', counts.error, counts.warn, counts.info, counts.hint)
+end
+
+vim.opt.statusline = "%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %F %{%v:lua.lsp_diagnostic_count()%}%< %=%{%v:lua.lsp_status()%}[bufno: %n]:%y[%l:%c of %L %p%%]"

@@ -60,134 +60,8 @@ end, {desc = "Toggle quickfix"})
 vim.o.background = "dark"
 -- vim.cmd.colorscheme "gruvbox"
 
--- status line
-local modes = {
-  ["n"] = "NORMAL",
-  ["no"] = "NORMAL",
-  ["v"] = "VISUAL",
-  ["V"] = "VISUAL LINE",
-  [""] = "VISUAL BLOCK",
-  ["s"] = "SELECT",
-  ["S"] = "SELECT LINE",
-  [""] = "SELECT BLOCK",
-  ["i"] = "INSERT",
-  ["ic"] = "INSERT",
-  ["R"] = "REPLACE",
-  ["Rv"] = "VISUAL REPLACE",
-  ["c"] = "COMMAND",
-  ["cv"] = "VIM EX",
-  ["ce"] = "EX",
-  ["r"] = "PROMPT",
-  ["rm"] = "MOAR",
-  ["r?"] = "CONFIRM",
-  ["!"] = "SHELL",
-  ["t"] = "TERMINAL",
-}
-
-local function mode()
-  local current_mode = vim.api.nvim_get_mode().mode
-  return string.format(" %s ", modes[current_mode]):upper()
-end
-
-local function update_mode_colors()
-  local current_mode = vim.api.nvim_get_mode().mode
-  local mode_color = "%#StatusLineAccent#"
-  if current_mode == "n" then
-      mode_color = "%#StatuslineAccent#"
-  elseif current_mode == "i" or current_mode == "ic" then
-      mode_color = "%#StatuslineInsertAccent#"
-  elseif current_mode == "v" or current_mode == "V" or current_mode == "" then
-      mode_color = "%#StatuslineVisualAccent#"
-  elseif current_mode == "R" then
-      mode_color = "%#StatuslineReplaceAccent#"
-  elseif current_mode == "c" then
-      mode_color = "%#StatuslineCmdLineAccent#"
-  elseif current_mode == "t" then
-      mode_color = "%#StatuslineTerminalAccent#"
-  end
-  return mode_color
-end
-
-local function filepath()
-  local fpath = vim.fn.fnamemodify(vim.fn.expand "%", ":~:.:h")
-  if fpath == "" or fpath == "." then
-      return " "
-  end
-
-  return string.format(" %%<%s/", fpath)
-end
-
-local function filename()
-  local fname = vim.fn.expand "%:t"
-  if fname == "" then
-      return ""
-  end
-  return fname .. " "
-end
-
-local function filetype()
-  return string.format(" %s ", vim.bo.filetype):upper()
-end
-
-local function lineinfo()
-  if vim.bo.filetype == "alpha" then
-    return ""
-  end
-  return " %P %l:%c "
-end
-
-local function lsp_progress ()
-  local lsp = vim.lsp.util.get_progress_messages()[1]
-  if lsp then
-    local name = lsp.name or ""
-    local msg = lsp.message or ""
-    local percentage = lsp.percentage or 0
-    local title = lsp.title or ""
-    return string.format(" %%<%s: %s %s (%s%%%%) ", name, title, msg, percentage)
-  end
-
-  return ""
-end
-
-Statusline = {}
-
-Statusline.active = function()
-  return table.concat {
-    "%#Statusline#",
-    update_mode_colors(),
-    mode(),
-    "%#Normal# ",
-    filepath(),
-    filename(),
-    lsp_progress(),
-    "%#Normal#",
-    "%=%#StatusLineExtra#",
-    filetype(),
-    lineinfo(),
-  }
-end
-
-function Statusline.inactive()
-  return " %F"
-end
-
-function Statusline.short()
-  return "%#StatusLineNC#   NvimTree"
-end
-
-vim.api.nvim_exec([[
-  augroup Statusline
-  au!
-  au WinEnter,BufEnter * setlocal statusline=%!v:lua.Statusline.active()
-  au WinLeave,BufLeave * setlocal statusline=%!v:lua.Statusline.inactive()
-  au WinEnter,BufEnter,FileType NvimTree setlocal statusline=%!v:lua.Statusline.short()
-  augroup END
-]], false)
-
 -- Lsp setup
 
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
@@ -281,12 +155,12 @@ local lspconfig = {
     pattern = {'java'},
     callback = function()
       local root_markers = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
-      local root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1])
+      local root_dir = vim.fs.dirname(vim.fs.find(root_markers, {})[1])
       local workspace_folder = "/.workspace" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
       local client = vim.lsp.start({
         name = "jdtls",
         cmd = {'jdtls', workspace_folder},
-        root_dir = vim.fs.dirname(vim.fs.find(root_markers)[1]) or vim.fn.getcwd(),
+        root_dir = vim.fs.dirname(vim.fs.find(root_markers, {})[1]) or vim.fn.getcwd(),
         settings = {
           java = {
             -- home = 'E:/java/jdk1.8.0_342',
@@ -378,3 +252,58 @@ for _, config in pairs(lspconfig) do
   })
 end
 
+function get_mode()
+  local mode_map = {
+    n = 'Normal',
+    i = 'Insert',
+    v = 'Visual',
+    [''] = 'V-Line',
+    V = 'V-Line',
+    c = 'Command',
+    no = 'Operator Pending',
+    s = 'Select',
+    S = 'S-Line',
+    R = 'Replace',
+    Rv = 'V-Replace',
+    t = 'Terminal'
+  }
+  local current_mode = vim.api.nvim_get_mode().mode
+  return mode_map[current_mode] or current_mode
+end
+
+function get_git_branch()
+  local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
+  if branch ~= "" then
+    return '[' .. string.gsub(branch, "%s+", "") .. ']'
+  else
+    return ""
+  end
+end
+
+function lsp_status()
+  local clients = vim.lsp.get_clients({bufnr = vim.api.nvim_get_current_buf()})
+  local messages = {}
+  for _, client in ipairs(clients) do
+    table.insert(messages, string.format('%s', client.name))
+    table.insert(messages, string.format('%s', vim.lsp.status()))
+  end
+  return table.concat(messages, ' ')
+end
+
+function lsp_diagnostic_count()
+  local counts = {
+    error = 0,
+    warn = 0,
+    info = 0,
+    hint = 0,
+  }
+  for _, diagnostic in ipairs(vim.diagnostic.get(vim.api.nvim_get_current_buf(), {
+    severity = { vim.diagnostic.severity.ERROR, vim.diagnostic.severity.WARN, vim.diagnostic.severity.INFO, vim.diagnostic.severity.HINT }
+  })) do
+    local severity = string.lower(vim.diagnostic.severity[diagnostic.severity])
+    counts[severity] = counts[severity] + 1
+  end
+  return string.format('E:%d W:%d I:%d H:%d', counts.error, counts.warn, counts.info, counts.hint)
+end
+
+vim.opt.statusline = "%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %F %{%v:lua.lsp_diagnostic_count()%}%< %=%{%v:lua.lsp_status()%}[bufno: %n]:%y[%l:%c of %L %p%%]"

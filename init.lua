@@ -295,10 +295,15 @@ lspconfig.kotlin_language_server.setup({
   cmd = {'kotlin-language-server'},
   capabilities = capabilities,
   filetypes = { "kotlin" },
-  root_dir = function (fname)
-    return lspconfig.util.root_pattern(vim.fs.find(root_files, {}))(fname) or vim.fn.getcwd()
+  root_dir = function ()
+    return vim.fs.dirname(vim.fs.find(root_files, {})[1]) or vim.fn.getcwd()
   end,
   single_file_support = true,
+  init_options = {
+    completion = {
+      snippets = {enabled = true},
+    }
+  },
 })
 
 local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
@@ -369,6 +374,13 @@ lspconfig.jdtls.setup({
       useBlocks = true,
     },
   },
+})
+
+lspconfig.rust_analyzer.setup({
+  cmd = {'rust-analyzer'},
+  filetypes = {'rust'},
+  single_file_support = true,
+  capabilities = capabilities,
 })
 
 --cmp

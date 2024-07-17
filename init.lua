@@ -53,18 +53,24 @@ require("lazy").setup({
     opts = {}
   },
   { 'skywind3000/asyncrun.vim' },
-  { 'neovim/nvim-lspconfig' },
-  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {},
-  config = function()
-    require("ibl").setup {scope = {enabled = true}}
-  end },
-  {
-    'hrsh7th/nvim-cmp',
-    dependencies = {
-      'hrsh7th/cmp-nvim-lsp',
-    },
+  { 'neovim/nvim-lspconfig',
+  dependencies = {
+    { 'williamboman/mason.nvim', config = true },
+    'williamboman/mason-lspconfig.nvim',
   },
-  {'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
+},
+{ "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {},
+config = function()
+  require("ibl").setup {scope = {enabled = true}}
+end },
+{
+  'hrsh7th/nvim-cmp',
+  dependencies = {
+    'hrsh7th/cmp-nvim-lsp',
+  },
+},
+{'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
+{'mfussenegger/nvim-jdtls'},
 })
 
 vim.o.hlsearch = true
@@ -306,74 +312,103 @@ lspconfig.kotlin_language_server.setup({
   },
 })
 
-local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib'}
-local root_dir = vim.fs.dirname(vim.fs.find(root_marker, {})[1]) or vim.fn.getcwd()
-lspconfig.jdtls.setup({
-  cmd = {'jdtls', '.workspace' .. vim.fn.fnamemodify(vim.fs.dirname(vim.fs.find(root_marker, {})[1]), ':p:h:t')},
-  filetypes = {'java'},
-  capabilities = capabilities,
-  single_file_support = true,
-  root_dir = function()
-    return root_dir
-  end,
-  settings = {
-    java = {
-      -- home = 'E:/java/jdk1.8.0_342',
-      eclipse = {downloadSources = true},
-      maven = {downloadSources = true},
-      gradle = {downloadSources = true},
-      configuration = {
-        updateBuildConfiguration = 'interactive',
-        --[[runtimes = {
-          name = 'JavaSE-8',
-          path = 'E:/java/jdk1.8.0_342',
-          defaults = true
+--[[
+@echo off
+java ^
+-javaagent:path\to\lombok.jar \
+-Declipse.application=org.eclipse.jdt.ls.core.id1 \
+-Dosgi.bundles.defaultStartLevel=4 \
+-Declipse.product=org.eclipse.jdt.ls.core.product \
+-Dlog.protocol=true \
+-Dlog.level=ALL \
+--add-modules=ALL-SYSTEM \
+--add-opens java.base/java.util=ALL-UNNAMED \
+--add-opens java.base/java.lang=ALL-UNNAMED \
+-Xms4G \
+-Xmx4G \
+-jar path\to\jdtls\plugins\org.eclipse.equinox.launcher_1.6.*.jar ^
+-configuration path\to\jdtls\config_linux\ \
+-data "$TEMP\$1" 
+]]--
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = {'java'},
+  callback = function()
+    local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
+    local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib', 'settings.gradle', 'gradle.properties'}
+    local config = {
+      cmd = {'jdtls', '.workspace_' .. project_name},
+      init_options = {
+        bundles = {},
+      },
+      root_dir = require('jdtls.setup').find_root(root_marker),
+      capabilities = capabilities,
+      settings = {
+        java = {
+          signatureHelp = {enabled = true},
+          completion = {
+            favoriteStaticMembers = {
+              "org.hamcrest.MatcherAssert.assertThat",
+              "org.hamcrest.Matchers.*",
+              "org.hamcrest.CoreMatchers.*",
+              "org.junit.jupiter.api.Assertions.*",
+              "java.util.Objects.requireNonNull",
+              "java.util.Objects.requireNonNullElse",
+              "org.mockito.Mockito.*"
+            }
+          },
+          eclipse = {downloadSources = true},
+          maven = {downloadSources = true},
+          referenceCodeLens = {enabled = true},
+          references = {includeDecompiledSources = true},
+          inlayHints = {
+            parameterNames = {
+              enabled = 'all'
+            }
+          },
+          extendedClientCapabilities = require('jdtls').extendedClientCapabilities,
+          configuration = {
+            updateBuildConfiguration = "interactive",
+            --[[runtimes = {
+              {
+                name = 'JavaSE-1.8',
+                path = 'D:/java/java8',
+                default = true,
+              },
+              {
+                name = 'JavaSE-21',
+                path = 'D:/java/java21'
+              },
+              {
+                name = 'JavaSE-22',
+                path = 'D:/java/java22'
+              },
+            },]]--
+          },
+          sources = {
+            organizeImports = {
+              starThreshold = 9999,
+              staticStarThreshold = 9999,
+            }
+          },
+          codeGeneration = {
+            toString = {
+              template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"
+            }
+          },
         },
-        {
-          name = 'JavaSE-18',
-          path = 'E:/java/java18',
-        },
-        {
-          name = 'JavaSE-11',
-          path = 'E:/java/java11'
-        }]]--
-      },
-      implementationsCodeLens = {enabled = true},
-      referencesCodeLens = {enabled = true},
-      references = {includeDecompiledSources = true},
-      maxConcurrentBuilds = 3,
-    },
-    signatureHelp = {enabled = true},
-    completion = {
-      favoriteStaticMembers = {
-        "org.hamcrest.MatcherAssert.assertThat",
-        "org.hamcrest.Matchers.*",
-        "org.hamcrest.CoreMatchers.*",
-        "org.junit.jupiter.api.Assertions.*",
-        "java.util.Objects.requireNonNull",
-        "java.util.Objects.requireNonNullElse",
-        "org.mockito.Mockito.*",
-      },
-      importOrder = {
-        "java",
-        "javax",
-        "com",
-        "org"
-      },
-    },
-    sources = {
-      organizeImports = {
-        starThreshold = 9999,
-        staticStarThreshold = 9999,
-      },
-    },
-    codeGeneration = {
-      toString = {
-        template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
-      },
-      useBlocks = true,
-    },
-  },
+      }
+    }
+    config.on_attach = function(_, bufnr)
+      vim.keymap.set('n', '<leader>joi', "<cmd>lua require('jdtls').organize_imports()<CR>", {desc = 'Java Organize Imports', buffer = bufnr})
+      vim.keymap.set('n', '<leader>jtc', "<cmd>lua require('jdtls').test_class()<CR>", {desc = 'Java test class', silent = true, buffer = bufnr})
+      vim.keymap.set('n', '<leader>jtnm', "<cmd>lua require('jdtls').test_nearest_method()<CR>", {desc = 'Java test nearest method', silent = true, buffer = bufnr})
+      vim.keymap.set('n', '<leader>jev', "<cmd>lua require('jdtls').extract_variable_all()<CR>", {desc = 'Java extract variable all', silent = true, buffer = bufnr})
+      vim.keymap.set('v', '<leader>jem', "<ESC><CR>lua require('jdtls').extract_method(true)<CR>", {desc = 'Java extract method', buffer = bufnr})
+      vim.keymap.set('n', '<leader>jec', "<CR>lua require('jdtls').extract_constant()<CR>", {desc = 'Java extract constant', buffer = bufnr})
+    end
+    -- require('jdtls').set_runtime('JavaSE-1.8')
+    require('jdtls').start_or_attach(config)
+  end
 })
 
 lspconfig.rust_analyzer.setup({

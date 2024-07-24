@@ -244,13 +244,12 @@ function get_mode()
   return mode_map[current_mode] or current_mode
 end
 
-function get_git_branch()
-  local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null")
-  if branch ~= "" then
-    return '[' .. string.gsub(branch, "%s+", "") .. ']'
-  else
-    return ""
-  end
-end
+vim.opt.statusline = "%{%v:lua.get_mode()%} %F%< %=[bufno: %n]:%y[%l:%c of %L %p%%]"
 
-vim.opt.statusline = "%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %F%< %=[bufno: %n]:%y[%l:%c of %L %p%%]"
+local config_file = vim.fn.getcwd() .. '/.nvimconf.lua'
+local file = io.open(config_file, 'r')
+if file then
+  vim.cmd('luafile ' .. config_file)
+  file:close()
+  require("lazy").setup({{import = config_file}})
+end

@@ -10,6 +10,7 @@ local plugins = {
       require "custom.configs.lspconfig"
     end,
   },
+  { "mfussenegger/nvim-jdtls" },
 }
 
 return plugins

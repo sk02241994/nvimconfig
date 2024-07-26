@@ -33,7 +33,8 @@ M.lspconfig = {
       function ()
         vim.lsp.buf.document_symbol()
       end, "LSP Document symbols"
-    }
+    },
+    ['<C-F12>'] = {'<cmd>Telescope lsp_document_symbols<cr>', "Show document sumbols"}
   }
 }
 

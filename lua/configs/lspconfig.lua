@@ -61,3 +61,9 @@ lspconfig.cmake.setup({
 	capabilities = capabilities,
 	on_attach = on_attach,
 })
+
+lspconfig.rust_analyzer.setup({
+	cmd = { "rust-analyzer" },
+	on_attach = on_attach,
+	capabilities = capabilities,
+})

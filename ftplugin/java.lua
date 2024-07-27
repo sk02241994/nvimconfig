@@ -19,7 +19,7 @@ java ^
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
 local capabilities = require("nvchad.configs.lspconfig").capabilities
 local on_attach = require("nvchad.configs.lspconfig").on_attach
-local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib', 'settings.gradle', 'gradle.properties'}
+local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'settings.gradle', 'gradle.properties'}
 local config = {
   cmd = {'jdtls', '.workspace_' .. project_name},
   init_options = {

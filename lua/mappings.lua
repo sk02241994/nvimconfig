@@ -27,3 +27,5 @@ map("n", "<F2>", function()
 	end
 end, { desc = "Toggle quickfix" })
 map("n", "<leader>fg", '<cmd>grep -s -w "<cword>"<cr>', { desc = "Find word under cursor" })
+map('n', "<leader>dd", vim.diagnostic.setloclist, { desc = "lsp diagnostic loclist" })
+map('n', "<leader>ds", '<cmd>Telescope lsp_document_symbols<cr>', { desc = "lsp document symbols" })

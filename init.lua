@@ -17,9 +17,9 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.bo.softtabstop = 2
-vim.opt.colorcolumn="120"
-vim.opt.cursorcolumn=true
-vim.opt.cursorline=true
+vim.opt.colorcolumn = "120"
+vim.opt.cursorcolumn = true
+vim.opt.cursorline = true
 vim.opt.swapfile = false
 
 require("lazy").setup({
@@ -31,8 +31,8 @@ require("lazy").setup({
     "windwp/nvim-autopairs",
     config = function() require("nvim-autopairs").setup {} end
   },
-  {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
-  {'nvim-treesitter/nvim-treesitter-textobjects'},
+  { "nvim-treesitter/nvim-treesitter",            build = ":TSUpdate" },
+  { 'nvim-treesitter/nvim-treesitter-textobjects' },
   {
     'nvim-tree/nvim-tree.lua',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
@@ -40,9 +40,9 @@ require("lazy").setup({
       require("nvim-tree").setup({})
     end,
   },
-  { 'Mofiqul/vscode.nvim', priority = 1000 },
-  {'kdheepak/lazygit.nvim'},
-  {'Mr-LLLLL/interestingwords.nvim'},
+  { 'Mofiqul/vscode.nvim',           priority = 1000 },
+  { 'kdheepak/lazygit.nvim' },
+  { 'Mr-LLLLL/interestingwords.nvim' },
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
@@ -53,24 +53,30 @@ require("lazy").setup({
     opts = {}
   },
   { 'skywind3000/asyncrun.vim' },
-  { 'neovim/nvim-lspconfig',
-  dependencies = {
-    { 'williamboman/mason.nvim', config = true },
-    'williamboman/mason-lspconfig.nvim',
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      { 'williamboman/mason.nvim', config = true },
+      'williamboman/mason-lspconfig.nvim',
+    },
   },
-},
-{ "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {},
-config = function()
-  require("ibl").setup {scope = {enabled = true}}
-end },
-{
-  'hrsh7th/nvim-cmp',
-  dependencies = {
-    'hrsh7th/cmp-nvim-lsp',
+  {
+    "lukas-reineke/indent-blankline.nvim",
+    main = "ibl",
+    opts = {},
+    config = function()
+      require("ibl").setup { scope = { enabled = true } }
+    end
   },
-},
-{'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
-{'mfussenegger/nvim-jdtls'},
+  {
+    'hrsh7th/nvim-cmp',
+    dependencies = {
+      'hrsh7th/cmp-nvim-lsp',
+    },
+  },
+  { 'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons' },
+  { 'mfussenegger/nvim-jdtls' },
+  { "ms-jpq/coq_nvim" },
 })
 
 vim.o.hlsearch = true
@@ -86,19 +92,19 @@ vim.o.termguicolors = true
 vim.opt.listchars = 'space:.,eol:$,tab:>>'
 vim.opt.list = true
 vim.o.completeopt = 'menuone,noselect'
-vim.keymap.set('n', '<C-l>', '<C-w>l', {noremap = true})
-vim.keymap.set('n', '<C-k>', '<C-w>k', {noremap = true})
-vim.keymap.set('n', '<C-j>', '<C-w>j', {noremap = true})
-vim.keymap.set('n', '<C-h>', '<C-w>h', {noremap = true})
-vim.keymap.set('n', '<C-s>', '<cmd>write<cr>', {noremap = true, desc = 'save'})
+vim.keymap.set('n', '<C-l>', '<C-w>l', { noremap = true })
+vim.keymap.set('n', '<C-k>', '<C-w>k', { noremap = true })
+vim.keymap.set('n', '<C-j>', '<C-w>j', { noremap = true })
+vim.keymap.set('n', '<C-h>', '<C-w>h', { noremap = true })
+vim.keymap.set('n', '<C-s>', '<cmd>write<cr>', { noremap = true, desc = 'save' })
 vim.keymap.set('n', '<leader><C-n>', "<cmd>tabnew<cr>", { desc = 'new tab' })
 vim.keymap.set('n', '<tab>', "<cmd>bn<CR>", { desc = 'next buffer' })
 vim.keymap.set('n', '<S-tab>', '<cmd>bp<CR>', { desc = 'previous buffer' })
-vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>', {desc = 'Buffer delete'})
-vim.keymap.set('n', '<a-up>', '<c-w>+', {desc = 'resize height increase'})
-vim.keymap.set('n', '<a-down>', '<c-w>-', {desc = 'resize height decrease'})
-vim.keymap.set('n', '<a-left>', '<c-w>>', {desc = 'resize width increase'})
-vim.keymap.set('n', '<a-right>', '<c-w><', {desc = 'resiez width decrease'})
+vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>', { desc = 'Buffer delete' })
+vim.keymap.set('n', '<a-up>', '<c-w>+', { desc = 'resize height increase' })
+vim.keymap.set('n', '<a-down>', '<c-w>-', { desc = 'resize height decrease' })
+vim.keymap.set('n', '<a-left>', '<c-w>>', { desc = 'resize width increase' })
+vim.keymap.set('n', '<a-right>', '<c-w><', { desc = 'resiez width decrease' })
 
 require('telescope').setup {
   defaults = {
@@ -134,11 +140,12 @@ vim.keymap.set('n', '<leader>t', "<cmd>Telescope<cr>", { desc = 'Open telescope'
 vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { desc = 'Find file' })
 vim.keymap.set('n', '<leader>fb', require('telescope.builtin').buffers, { desc = 'Show buffers' })
 vim.keymap.set('n', '<leader>fw', require('telescope.builtin').live_grep, { desc = 'Live grep' })
-vim.keymap.set('n', '<leader>fW', function() require('telescope').extensions.live_grep_args.live_grep_args() end, { desc = 'Live grep with args' })
-vim.keymap.set('n', "<leader>fg", "<cmd>grep -s -w \"<cword>\"<cr>", {desc = "Find word under cursor"})
+vim.keymap.set('n', '<leader>fW', function() require('telescope').extensions.live_grep_args.live_grep_args() end,
+  { desc = 'Live grep with args' })
+vim.keymap.set('n', "<leader>fg", "<cmd>grep -s -w \"<cword>\"<cr>", { desc = "Find word under cursor" })
 vim.keymap.set('n', '<leader>fz', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
-  require('telescope.builtin').current_buffer_fuzzy_find({fuzzy = false})
+  require('telescope.builtin').current_buffer_fuzzy_find({ fuzzy = false })
 end, { desc = 'Fuzzily search in current buffer]' })
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
 vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
@@ -150,11 +157,11 @@ vim.keymap.set('n', '<F2>', function()
     end
   end
   if qf_exists then
-    vim.cmd[[cclose]]
+    vim.cmd [[cclose]]
   else
-    vim.cmd[[copen]]
+    vim.cmd [[copen]]
   end
-end, {desc = "Toggle quickfix"})
+end, { desc = "Toggle quickfix" })
 
 -- You don't need to set any of these options.
 -- IMPORTANT!: this is only a showcase of how you can set default options!
@@ -175,9 +182,9 @@ vim.o.background = "dark"
 require('vscode').load()
 
 vim.opt.termguicolors = true
-require("bufferline").setup{}
+require("bufferline").setup {}
 
-require'nvim-treesitter.configs'.setup {
+require 'nvim-treesitter.configs'.setup {
   sync_install = false,
   auto_install = true,
   highlight = {
@@ -195,7 +202,7 @@ require("interestingwords").setup {
   color_key = "<leader>k",
   cancel_color_key = "<leader>K",
 }
-vim.cmd[[set grepprg=rg\ --vimgrep]]
+vim.cmd [[set grepprg=rg\ --vimgrep]]
 
 -- Lsp config
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
@@ -204,39 +211,44 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('UserLspConfig', {}),
   callback = function(args)
-    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, {desc = '[R]e[n]ame', buffer = args.buf})
-    vim.keymap.set({'n', 'v'}, '<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction', buffer = args.buf})
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { desc = '[R]e[n]ame', buffer = args.buf })
+    vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction', buffer = args.buf })
 
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {desc = '[G]oto [D]efinition', buffer = args.buf})
-    vim.keymap.set('n', 'gr', vim.lsp.buf.references, {desc = '[G]oto [R]eferences', buffer = args.buf})
-    vim.keymap.set('n', 'gI', require('telescope.builtin').lsp_implementations, {desc = '[G]oto [I]mplementation', buffer = args.buf})
-    vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, {desc = 'Type [D]efinition', buffer = args.buf})
-    vim.keymap.set('n', '<leader>ds',vim.lsp.buf.document_symbol, {desc = '[D]ocument [S]ymbols', buffer = args.buf})
-    vim.keymap.set('n', '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, {desc = '[W]orkspace [S]ymbols', buffer = args.buf})
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = '[G]oto [D]efinition', buffer = args.buf })
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, { desc = '[G]oto [R]eferences', buffer = args.buf })
+    vim.keymap.set('n', 'gI', require('telescope.builtin').lsp_implementations,
+      { desc = '[G]oto [I]mplementation', buffer = args.buf })
+    vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, { desc = 'Type [D]efinition', buffer = args.buf })
+    vim.keymap.set('n', '<leader>ds', vim.lsp.buf.document_symbol, { desc = '[D]ocument [S]ymbols', buffer = args.buf })
+    vim.keymap.set('n', '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols,
+      { desc = '[W]orkspace [S]ymbols', buffer = args.buf })
 
     -- See `:help K, ` for why this keymap
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, {desc = 'Hover Documentation', buffer = args.buf})
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, {desc = 'Signature Documentation', buffer = args.buf})
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, { desc = 'Hover Documentation', buffer = args.buf })
+    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, { desc = 'Signature Documentation', buffer = args.buf })
 
     -- Lesser used 'n', LSP functionality
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, {desc = '[G]oto [D]eclaration', buffer = args.buf})
-    vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, {desc = '[W]orkspace [A]dd Folder', buffer = args.buf})
-    vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, {desc = '[W]orkspace [R]emove Folder', buffer = args.buf})
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { desc = '[G]oto [D]eclaration', buffer = args.buf })
+    vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder,
+      { desc = '[W]orkspace [A]dd Folder', buffer = args.buf })
+    vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder,
+      { desc = '[W]orkspace [R]emove Folder', buffer = args.buf })
     vim.keymap.set('n', '<leader>wl', function()
       print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, {desc = '[W]orkspace [L]ist Folders', buffer = args.buf})
+    end, { desc = '[W]orkspace [L]ist Folders', buffer = args.buf })
   end
 })
 
 --lspconfig
 -- can look more into specific configs from this website https://www.andersevenrud.net/neovim.github.io/lsp/configurations/
+local coq = require("coq")
 local lspconfig = require('lspconfig')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = false
 
-lspconfig.lua_ls.setup({
-  cmd = {'lua-language-server'},
+lspconfig.lua_ls.setup(coq.lsp_ensure_capabilities({
+  cmd = { 'lua-language-server' },
   capabilities = capabilities,
   settings = {
     Lua = {
@@ -255,27 +267,27 @@ lspconfig.lua_ls.setup({
       },
     },
   },
-})
+}))
 
-lspconfig.tsserver.setup({
-  cmd = {'typescript-language-server', '--stdio'},
+lspconfig.tsserver.setup(coq.lsp_ensure_capabilities({
+  cmd = { 'typescript-language-server', '--stdio' },
   filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
-  init_options = {hostInfo = "neovim"},
+  init_options = { hostInfo = "neovim" },
   single_file_support = true,
   capabilities = capabilities,
-})
+}))
 
-lspconfig.clangd.setup ({
-  cmd = {'clangd'},
+lspconfig.clangd.setup(coq.lsp_ensure_capabilities({
+  cmd = { 'clangd' },
   capabilities = capabilities,
   filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
   single_file_support = true,
-})
+}))
 
-lspconfig.pyright.setup({
-  cmd = {'pyright-langserver', '--stdio'},
-  filetypes = {"python"},
-  settings ={
+lspconfig.pyright.setup(coq.lsp_ensure_capabilities({
+  cmd = { 'pyright-langserver', '--stdio' },
+  filetypes = { "python" },
+  settings = {
     python = {
       analysis = {
         autoSearchPaths = true,
@@ -286,31 +298,31 @@ lspconfig.pyright.setup({
   },
   single_file_support = true,
   capabilities = capabilities,
-})
+}))
 
-lspconfig.cmake.setup({
-  cmd = {'cmake-language-server'},
-  filetypes = {"cmake", "CMakeLists.txt"},
+lspconfig.cmake.setup(coq.lsp_ensure_capabilities({
+  cmd = { 'cmake-language-server' },
+  filetypes = { "cmake", "CMakeLists.txt" },
   init_options = { buildDirectory = "build" },
   single_file_support = true,
   capabilities = capabilities,
-})
+}))
 
-local root_files = {'settings.gradle'}
-lspconfig.kotlin_language_server.setup({
-  cmd = {'kotlin-language-server'},
+local root_files = { 'settings.gradle' }
+lspconfig.kotlin_language_server.setup(coq.lsp_ensure_capabilities({
+  cmd = { 'kotlin-language-server' },
   capabilities = capabilities,
   filetypes = { "kotlin" },
-  root_dir = function ()
+  root_dir = function()
     return vim.fs.dirname(vim.fs.find(root_files, {})[1]) or vim.fn.getcwd()
   end,
   single_file_support = true,
   init_options = {
     completion = {
-      snippets = {enabled = true},
+      snippets = { enabled = true },
     }
   },
-})
+}))
 
 --[[
 @echo off
@@ -328,15 +340,16 @@ java ^
 -Xmx4G \
 -jar path\to\jdtls\plugins\org.eclipse.equinox.launcher_1.6.*.jar ^
 -configuration path\to\jdtls\config_linux\ \
--data "$TEMP\$1" 
-]]--
+-data "$TEMP\$1"
+]] --
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = {'java'},
+  pattern = { 'java' },
   callback = function()
     local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
-    local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib', 'settings.gradle', 'gradle.properties'}
-    local config = {
-      cmd = {'jdtls', '.workspace_' .. project_name},
+    local root_marker = { '.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'classes', 'lib', 'settings.gradle',
+      'gradle.properties' }
+    local config = coq.lsp_ensure_capabilities({
+      cmd = { 'jdtls', '.workspace_' .. project_name },
       init_options = {
         bundles = {},
       },
@@ -344,7 +357,7 @@ vim.api.nvim_create_autocmd("FileType", {
       capabilities = capabilities,
       settings = {
         java = {
-          signatureHelp = {enabled = true},
+          signatureHelp = { enabled = true },
           completion = {
             favoriteStaticMembers = {
               "org.hamcrest.MatcherAssert.assertThat",
@@ -356,10 +369,10 @@ vim.api.nvim_create_autocmd("FileType", {
               "org.mockito.Mockito.*"
             }
           },
-          eclipse = {downloadSources = true},
-          maven = {downloadSources = true},
-          referenceCodeLens = {enabled = true},
-          references = {includeDecompiledSources = true},
+          eclipse = { downloadSources = true },
+          maven = { downloadSources = true },
+          referenceCodeLens = { enabled = true },
+          references = { includeDecompiledSources = true },
           inlayHints = {
             parameterNames = {
               enabled = 'all'
@@ -382,7 +395,7 @@ vim.api.nvim_create_autocmd("FileType", {
                 name = 'JavaSE-22',
                 path = 'D:/java/java22'
               },
-            },]]--
+            },]] --
           },
           sources = {
             organizeImports = {
@@ -397,37 +410,43 @@ vim.api.nvim_create_autocmd("FileType", {
           },
         },
       }
-    }
+    })
     config.on_attach = function(_, bufnr)
-      vim.keymap.set('n', '<leader>joi', "<cmd>lua require('jdtls').organize_imports()<CR>", {desc = 'Java Organize Imports', buffer = bufnr})
-      vim.keymap.set('n', '<leader>jtc', "<cmd>lua require('jdtls').test_class()<CR>", {desc = 'Java test class', silent = true, buffer = bufnr})
-      vim.keymap.set('n', '<leader>jtnm', "<cmd>lua require('jdtls').test_nearest_method()<CR>", {desc = 'Java test nearest method', silent = true, buffer = bufnr})
-      vim.keymap.set('n', '<leader>jev', "<cmd>lua require('jdtls').extract_variable_all()<CR>", {desc = 'Java extract variable all', silent = true, buffer = bufnr})
-      vim.keymap.set('v', '<leader>jem', "<ESC><CR>lua require('jdtls').extract_method(true)<CR>", {desc = 'Java extract method', buffer = bufnr})
-      vim.keymap.set('n', '<leader>jec', "<CR>lua require('jdtls').extract_constant()<CR>", {desc = 'Java extract constant', buffer = bufnr})
+      vim.keymap.set('n', '<leader>joi', "<cmd>lua require('jdtls').organize_imports()<CR>",
+        { desc = 'Java Organize Imports', buffer = bufnr })
+      vim.keymap.set('n', '<leader>jtc', "<cmd>lua require('jdtls').test_class()<CR>",
+        { desc = 'Java test class', silent = true, buffer = bufnr })
+      vim.keymap.set('n', '<leader>jtnm', "<cmd>lua require('jdtls').test_nearest_method()<CR>",
+        { desc = 'Java test nearest method', silent = true, buffer = bufnr })
+      vim.keymap.set('n', '<leader>jev', "<cmd>lua require('jdtls').extract_variable_all()<CR>",
+        { desc = 'Java extract variable all', silent = true, buffer = bufnr })
+      vim.keymap.set('v', '<leader>jem', "<ESC><CR>lua require('jdtls').extract_method(true)<CR>",
+        { desc = 'Java extract method', buffer = bufnr })
+      vim.keymap.set('n', '<leader>jec', "<CR>lua require('jdtls').extract_constant()<CR>",
+        { desc = 'Java extract constant', buffer = bufnr })
     end
     -- require('jdtls').set_runtime('JavaSE-1.8')
     require('jdtls').start_or_attach(config)
   end
 })
 
-lspconfig.rust_analyzer.setup({
-  cmd = {'rust-analyzer'},
-  filetypes = {'rust'},
+lspconfig.rust_analyzer.setup(coq.lsp_ensure_capabilities({
+  cmd = { 'rust-analyzer' },
+  filetypes = { 'rust' },
   single_file_support = true,
   capabilities = capabilities,
-})
+}))
 
 --cmp
 local cmp = require 'cmp'
 cmp.setup {
   sources = {
-    {name = 'nvim_lsp'},
+    { name = 'nvim_lsp' },
   },
   mapping = cmp.mapping.preset.insert {
     ['<C-n>'] = cmp.mapping.select_next_item(),
     ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<CR>'] =cmp.mapping({
+    ['<CR>'] = cmp.mapping({
       i = function(fallback)
         if cmp.visible() and cmp.get_active_entry() then
           cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
@@ -470,7 +489,7 @@ function get_git_branch()
 end
 
 function lsp_status()
-  local clients = vim.lsp.get_clients({bufnr = vim.api.nvim_get_current_buf()})
+  local clients = vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf() })
   local messages = {}
   for _, client in ipairs(clients) do
     table.insert(messages, string.format('%s', client.name))
@@ -495,4 +514,5 @@ function lsp_diagnostic_count()
   return string.format('E:%d W:%d I:%d H:%d', counts.error, counts.warn, counts.info, counts.hint)
 end
 
-vim.opt.statusline = "%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %F %{%v:lua.lsp_diagnostic_count()%}%< %=%{%v:lua.lsp_status()%}[bufno: %n]:%y[%l:%c of %L %p%%]"
+vim.opt.statusline =
+"%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %F %{%v:lua.lsp_diagnostic_count()%}%< %=%{%v:lua.lsp_status()%}[bufno: %n]:%y[%l:%c of %L %p%%]"

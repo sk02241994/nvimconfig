@@ -14,14 +14,16 @@ java ^
 -Xmx4G \
 -jar path\to\jdtls\plugins\org.eclipse.equinox.launcher_1.6.*.jar ^
 -configuration path\to\jdtls\config_linux\ \
--data "$TEMP\$1" 
+-data "$TEMP\$1"
 ]]
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
 local capabilities = require("nvchad.configs.lspconfig").capabilities
 local on_attach = require("nvchad.configs.lspconfig").on_attach
-local root_marker = {'.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle'}
-local config = {
-  cmd = {'jdtls', '.workspace_' .. project_name},
+local root_marker = { '.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle' }
+local coq = require("coq")
+
+local config = coq.lsp_ensure_capabilities({
+  cmd = { 'jdtls', '.workspace_' .. project_name },
   init_options = {
     bundles = {},
   },
@@ -29,7 +31,7 @@ local config = {
   capabilities = capabilities,
   settings = {
     java = {
-      signatureHelp = {enabled = true},
+      signatureHelp = { enabled = true },
       completion = {
         favoriteStaticMembers = {
           "org.hamcrest.MatcherAssert.assertThat",
@@ -41,10 +43,10 @@ local config = {
           "org.mockito.Mockito.*"
         }
       },
-      eclipse = {downloadSources = true},
-      maven = {downloadSources = true},
-      referenceCodeLens = {enabled = true},
-      references = {includeDecompiledSources = true},
+      eclipse = { downloadSources = true },
+      maven = { downloadSources = true },
+      referenceCodeLens = { enabled = true },
+      references = { includeDecompiledSources = true },
       inlayHints = {
         parameterNames = {
           enabled = 'all'
@@ -67,7 +69,7 @@ local config = {
                 name = 'JavaSE-22',
                 path = 'D:/java/java22'
               },
-            },]]--
+            },]] --
       },
       sources = {
         organizeImports = {
@@ -82,15 +84,21 @@ local config = {
       },
     },
   }
-}
+})
 config.on_attach = function(client, bufnr)
   on_attach(client, bufnr)
-  vim.keymap.set('n', '<leader>joi', "<cmd>lua require('jdtls').organize_imports()<CR>", {desc = 'Java Organize Imports', buffer = bufnr})
-  vim.keymap.set('n', '<leader>jtc', "<cmd>lua require('jdtls').test_class()<CR>", {desc = 'Java test class', silent = true, buffer = bufnr})
-  vim.keymap.set('n', '<leader>jtnm', "<cmd>lua require('jdtls').test_nearest_method()<CR>", {desc = 'Java test nearest method', silent = true, buffer = bufnr})
-  vim.keymap.set('n', '<leader>jev', "<cmd>lua require('jdtls').extract_variable_all()<CR>", {desc = 'Java extract variable all', silent = true, buffer = bufnr})
-  vim.keymap.set('v', '<leader>jem', "<ESC><CR>lua require('jdtls').extract_method(true)<CR>", {desc = 'Java extract method', buffer = bufnr})
-  vim.keymap.set('n', '<leader>jec', "<CR>lua require('jdtls').extract_constant()<CR>", {desc = 'Java extract constant', buffer = bufnr})
+  vim.keymap.set('n', '<leader>joi', "<cmd>lua require('jdtls').organize_imports()<CR>",
+    { desc = 'Java Organize Imports', buffer = bufnr })
+  vim.keymap.set('n', '<leader>jtc', "<cmd>lua require('jdtls').test_class()<CR>",
+    { desc = 'Java test class', silent = true, buffer = bufnr })
+  vim.keymap.set('n', '<leader>jtnm', "<cmd>lua require('jdtls').test_nearest_method()<CR>",
+    { desc = 'Java test nearest method', silent = true, buffer = bufnr })
+  vim.keymap.set('n', '<leader>jev', "<cmd>lua require('jdtls').extract_variable_all()<CR>",
+    { desc = 'Java extract variable all', silent = true, buffer = bufnr })
+  vim.keymap.set('v', '<leader>jem', "<ESC><CR>lua require('jdtls').extract_method(true)<CR>",
+    { desc = 'Java extract method', buffer = bufnr })
+  vim.keymap.set('n', '<leader>jec', "<CR>lua require('jdtls').extract_constant()<CR>",
+    { desc = 'Java extract constant', buffer = bufnr })
 end
 -- require('jdtls').set_runtime('JavaSE-1.8')
 require('jdtls').start_or_attach(config)

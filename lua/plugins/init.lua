@@ -1,44 +1,45 @@
 return {
-	{
-		"stevearc/conform.nvim",
-		-- event = 'BufWritePre', -- uncomment for format on save
-		config = function()
-			require("configs.conform")
-		end,
-	},
+  {
+    "stevearc/conform.nvim",
+    -- event = 'BufWritePre', -- uncomment for format on save
+    config = function()
+      require("configs.conform")
+    end,
+  },
 
-	{
-		"neovim/nvim-lspconfig",
-		config = function()
-			require("nvchad.configs.lspconfig").defaults()
-			require("configs.lspconfig")
-		end,
-	},
+  {
+    "neovim/nvim-lspconfig",
+    config = function()
+      require("nvchad.configs.lspconfig").defaults()
+      require("configs.lspconfig")
+    end,
+  },
 
-	{
-		"williamboman/mason.nvim",
-		opts = {
-			ensure_installed = {
-				"lua-language-server",
-				"stylua",
-				"prettier",
-			},
-		},
-	},
+  {
+    "williamboman/mason.nvim",
+    opts = {
+      ensure_installed = {
+        "lua-language-server",
+        "stylua",
+        "prettier",
+      },
+    },
+  },
 
-	{
-		"nvim-treesitter/nvim-treesitter",
-		opts = {
-			ensure_installed = {
-				"vim",
-				"lua",
-				"vimdoc",
-				"html",
-				"css",
-			},
-		},
-	},
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = {
+      ensure_installed = {
+        "vim",
+        "lua",
+        "vimdoc",
+        "html",
+        "css",
+      },
+    },
+  },
 
-	{ "skywind3000/asyncrun.vim" },
-	{ "mfussenegger/nvim-jdtls" },
+  { "skywind3000/asyncrun.vim" },
+  { "mfussenegger/nvim-jdtls" },
+  { "ms-jpq/coq_nvim" },
 }

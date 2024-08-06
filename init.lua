@@ -325,22 +325,27 @@ lspconfig.kotlin_language_server.setup(coq.lsp_ensure_capabilities({
 }))
 
 --[[
-@echo off
-java ^
--javaagent:path\to\lombok.jar \
--Declipse.application=org.eclipse.jdt.ls.core.id1 \
--Dosgi.bundles.defaultStartLevel=4 \
--Declipse.product=org.eclipse.jdt.ls.core.product \
--Dlog.protocol=true \
--Dlog.level=ALL \
---add-modules=ALL-SYSTEM \
---add-opens java.base/java.util=ALL-UNNAMED \
---add-opens java.base/java.lang=ALL-UNNAMED \
--Xms4G \
--Xmx4G \
--jar path\to\jdtls\plugins\org.eclipse.equinox.launcher_1.6.*.jar ^
--configuration path\to\jdtls\config_linux\ \
--data "$TEMP\$1"
+JDTLS_PATH="$LSP/jdtls"
+JDT_FILE=$(find $JDTLS_PATH -name org.eclipse.equinox.launcher_*.jar)
+LOMBOK=$(find $JDTLS_PATH -name lombok.jar)
+CONFIG_LINUX=$(find $JDTLS_PATH -name config_linux)
+
+java \
+  -javaagent:$LOMBOK \
+  -Declipse.application=org.eclipse.jdt.ls.core.id1 \
+  -Dosgi.bundles.defaultStartLevel=4 \
+  -Declipse.product=org.eclipse.jdt.ls.core.product \
+  -Dlog.protocol=true \
+  -Dosgi.checkConfiguration=true \
+  -Dlog.level=ALL \
+  -Xms1024m \
+  -Xmx3000m \
+  --add-modules=ALL-SYSTEM \
+  --add-opens java.base/java.util=ALL-UNNAMED \
+  --add-opens java.base/java.lang=ALL-UNNAMED \
+  -jar "$JDT_FILE" \
+  -configuration "$CONFIG_LINUX" \
+  -data $TEMP/$1
 ]] --
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
 local root_marker = { '.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle' }

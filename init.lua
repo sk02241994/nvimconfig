@@ -58,6 +58,7 @@ vim.opt.termguicolors = true
 vim.cmd[[
 set grepprg=rg\ --vimgrep
 highlight NORMAL guibg=NONE ctermbg=NONE
+syntax off
 ]]
 
 function get_mode()

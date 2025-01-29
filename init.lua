@@ -4,9 +4,9 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.bo.softtabstop = 2
-vim.opt.colorcolumn="120"
-vim.opt.cursorcolumn=true
-vim.opt.cursorline=true
+-- vim.opt.colorcolumn="120"
+-- vim.opt.cursorcolumn=true
+-- vim.opt.cursorline=true
 vim.opt.swapfile = false
 vim.o.hlsearch = true
 vim.wo.number = true
@@ -102,3 +102,6 @@ if file then
   vim.cmd('luafile ' .. config_file)
 file:close()
 end
+
+-- vim.opt.runtimepath:append("~/.config/nvim/custom_files/*")
+-- vim.cmd('luafile ' .. '~/.config/nvim/custom_files/custom_config.lua')

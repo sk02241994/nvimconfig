@@ -26,6 +26,14 @@ require("lazy").setup({
     opts = {}
   },
   { 'skywind3000/asyncrun.vim' },
+  {
+    "windwp/nvim-autopairs",
+    config = function() require("nvim-autopairs").setup {} end
+  },
+  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {},
+  config = function()
+    require("ibl").setup {scope = {enabled = true}}
+  end },
 })
 
 
@@ -133,7 +141,7 @@ local config_file = vim.fn.getcwd() .. '/.nvimconf.lua'
 local file = io.open(config_file, 'r')
 if file then
   vim.cmd('luafile ' .. config_file)
-file:close()
+  file:close()
 end
 
 -- vim.opt.runtimepath:append("~/.config/nvim/custom_files/*")
@@ -184,4 +192,3 @@ vim.keymap.set('n', '<leader>fz', function()
 end, { desc = 'Fuzzily search in current buffer]' })
 vim.keymap.set('n', '<leader>m', '<cmd>Telescope marks<cr>', {desc = 'Open marks telescope'})
 vim.keymap.set('n', '<leader>r', '<cmd>Telescope registers<cr>', {desc = 'Open marks telescope'})
---[[]]

@@ -47,6 +47,7 @@ vim.keymap.set('n', "<leader>fg", "<cmd>grep -sw \"<cword>\"<cr>:cwindow<cr>", {
 -- vim.keymap.set('n', '<leader>v', ':registers<cr>', { desc = 'Show marks' })
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
 vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
+vim.keymap.set('n', '<leader>e', ":Lex<cr>", { desc = 'Open explorer' })
 vim.keymap.set('n', '<F2>', function() 
   local qf_exists = false
   for _, win in pairs(vim.fn.getwininfo()) do
@@ -68,6 +69,7 @@ vim.cmd[[
 set grepprg=rg\ --vimgrep
 highlight NORMAL guibg=NONE ctermbg=NONE
 syntax off
+let g:netrw_winsize=20
 ]]
 
 function get_mode()

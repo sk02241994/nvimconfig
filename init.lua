@@ -117,7 +117,7 @@ end
 
 local function fzf_file_finder()
 
-  local tempfile = os.getenv("TEMP") .. "\\fzf_select_file"
+  local tempfile = os.getenv("TEMP") .. "/fzf_select_file"
   vim.fn.delete(tempfile)
 
   local buf = vim.api.nvim_create_buf(false, true)

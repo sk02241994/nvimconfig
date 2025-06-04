@@ -136,7 +136,7 @@ local function fzf_file_finder()
     border = 'rounded',
   })
 
-  local cmd = string.format('fzf --preview="type {}" --preview-window=right:50%% > %s', tempfile)
+  local cmd = string.format('fzf --preview="cat {}" --preview-window=right:50%% > %s', tempfile)
   local term_job_id = vim.fn.termopen(cmd, {
     on_exit = function(_, exit_code, _)
       vim.schedule(function()

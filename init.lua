@@ -41,7 +41,9 @@ vim.keymap.set('n', '<a-up>', '<c-w>+', {desc = 'resize height increase'})
 vim.keymap.set('n', '<a-down>', '<c-w>-', {desc = 'resize height decrease'})
 vim.keymap.set('n', '<a-left>', '<c-w>>', {desc = 'resize width increase'})
 vim.keymap.set('n', '<a-right>', '<c-w><', {desc = 'resiez width decrease'})
+-- vim.keymap.set('n', '<leader>fb', ':buffers<cr>:buffer<space>', { desc = 'Show buffers' })
 vim.keymap.set('n', "<leader>fg", "<cmd>grep -sw \"<cword>\"<cr>:cwindow<cr>", {desc = "Find word under cursor"})
+-- vim.keymap.set('n', '<leader>m', ':marks<cr>:\'', { desc = 'Show marks' })
 vim.keymap.set('n', '<leader>v', ':registers<cr>:normal "p<left>', { desc = 'Show registers to paste' })
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
 vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
@@ -107,9 +109,50 @@ if file then
   file:close()
 end
 
+if vim.g.neovide then
+  vim.o.guifont = "JetBrainsMonoNL Nerd Font:h10"
+end
 -- vim.opt.runtimepath:append("~/.config/nvim/custom_files/*")
 -- vim.cmd('luafile ' .. '~/.config/nvim/custom_files/custom_config.lua')
 
+local function fzf_file_finder()
+
+  local tempfile = os.getenv("TEMP") .. "\\fzf_select_file"
+  vim.fn.delete(tempfile)
+
+  local buf = vim.api.nvim_create_buf(false, true)
+  local width = math.floor(vim.o.columns * 0.8)
+  local height = math.floor(vim.o.lines * 0.8)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = 'editor',
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = 'minimal',
+    border = 'rounded',
+  })
+
+  local cmd = string.format('fzf --preview="type {}" --preview-window=right:50%% > %s', tempfile)
+  local term_job_id = vim.fn.termopen(cmd, {
+    on_exit = function(_, exit_code, _)
+      vim.schedule(function()
+        vim.api.nvim_win_close(win, true)
+        vim.api.nvim_buf_delete(buf, {force = true})
+        local file = vim.fn.readfile(tempfile)[1]
+        if file and file ~= '' then
+          vim.cmd('edit ' .. vim.fn.fnameescape(file))
+        end
+      end)
+    end,
+  })
+  vim.cmd('startinsert')
+end
+vim.api.nvim_create_user_command("FzfFiles", fzf_file_finder, {})
+vim.keymap.set('n', '<leader>ff', "<cmd>FzfFiles<CR>", { desc = 'Fuzzy find' })
 --[[
 This is plugin section
 ]]

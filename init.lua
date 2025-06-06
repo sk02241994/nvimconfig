@@ -42,7 +42,8 @@ vim.keymap.set('n', '<a-down>', '<c-w>-', {desc = 'resize height decrease'})
 vim.keymap.set('n', '<a-left>', '<c-w>>', {desc = 'resize width increase'})
 vim.keymap.set('n', '<a-right>', '<c-w><', {desc = 'resiez width decrease'})
 -- vim.keymap.set('n', '<leader>fb', ':buffers<cr>:buffer<space>', { desc = 'Show buffers' })
-vim.keymap.set('n', "<leader>fg", "<cmd>grep -sw \"<cword>\"<cr>:cwindow<cr>", {desc = "Find word under cursor"})
+vim.keymap.set('n', "<leader>fg", "<cmd>grep -sw --vimgrep \"<cword>\"<cr>:cwindow<cr>", {desc = "Find word under cursor"})
+vim.keymap.set('n', "<leader>fw", "<cmd>grep ", {desc = "Grep it"})
 -- vim.keymap.set('n', '<leader>m', ':marks<cr>:\'', { desc = 'Show marks' })
 vim.keymap.set('n', '<leader>v', ':registers<cr>:normal "p<left>', { desc = 'Show registers to paste' })
 vim.keymap.set('n', '<leader>ch', ':chistory<CR>:chistory ', { desc = 'Show quickfix history' })
@@ -67,7 +68,7 @@ vim.o.background = "dark"
 vim.opt.termguicolors = true
 
 vim.cmd[[
-set grepprg=rg\ --vimgrep
+set grepprg=rg
 highlight NORMAL guibg=NONE ctermbg=NONE
 syntax off
 let g:netrw_winsize=20

@@ -1,30 +1,3 @@
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", -- latest stable release
-    lazypath,
-  })
-end
-vim.opt.rtp:prepend(lazypath)
-
-require("lazy").setup({
-  {
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    init = function()
-      vim.o.timeout = true
-      vim.o.timeoutlen = 300
-    end,
-    opts = {}
-  },
-  { 'skywind3000/asyncrun.vim' },
-  { 'williamboman/mason.nvim', config = true },
-})
-
 vim.g.mapleader = " " -- Make sure to set `mapleader` before lazy so your mappings are correct
 vim.g.maplocalleader = ' '
 vim.opt.tabstop = 2
@@ -69,12 +42,15 @@ vim.keymap.set('n', '<a-down>', '<c-w>-', {desc = 'resize height decrease'})
 vim.keymap.set('n', '<a-left>', '<c-w>>', {desc = 'resize width increase'})
 vim.keymap.set('n', '<a-right>', '<c-w><', {desc = 'resiez width decrease'})
 -- vim.keymap.set('n', '<leader>fb', ':buffers<cr>:buffer<space>', { desc = 'Show buffers' })
-vim.keymap.set('n', "<leader>fg", "<cmd>grep -sw \"<cword>\"<cr>:cwindow<cr>", {desc = "Find word under cursor"})
+vim.keymap.set('n', "<leader>fg", "<cmd>grep -sw --vimgrep \"<cword>\"<cr>:cwindow<cr>", {desc = "Find word under cursor"})
+vim.keymap.set('n', "<leader>fw", ":grep ", {desc = "Grep it"})
 -- vim.keymap.set('n', '<leader>m', ':marks<cr>:\'', { desc = 'Show marks' })
--- vim.keymap.set('n', '<leader>v', ':registers<cr>', { desc = 'Show marks' })
+vim.keymap.set('n', '<leader>v', ':registers<cr>:normal "p<left>', { desc = 'Show registers to paste' })
+vim.keymap.set('n', '<leader>ch', ':chistory<CR>:chistory ', { desc = 'Show quickfix history' })
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
 vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
-vim.keymap.set('n', '<F2>', function()
+vim.keymap.set('n', '<leader>e', ":Lex<cr>", { desc = 'Open explorer' })
+vim.keymap.set('n', '<F2>', function() 
   local qf_exists = false
   for _, win in pairs(vim.fn.getwininfo()) do
     if win['quickfix'] == 1 then
@@ -92,9 +68,10 @@ vim.o.background = "dark"
 vim.opt.termguicolors = true
 
 vim.cmd[[
-set grepprg=rg\ --vimgrep
+set grepprg=rg
 highlight NORMAL guibg=NONE ctermbg=NONE
 syntax off
+let g:netrw_winsize=20
 ]]
 
 function get_mode()
@@ -125,33 +102,7 @@ function get_git_branch()
   end
 end
 
-function lsp_status()
-  local clients = vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf()})
-  local messages = {}
-  for _, client in ipairs(clients) do
-    table.insert(messages, string.format('%s', client.name))
-    table.insert(messages, string.format('%s', vim.lsp.status()))
-  end
-  return table.concat(messages, ' ')
-end
-
-function lsp_diagnostic_count()
-  local counts = {
-    error = 0,
-    warn = 0,
-    info = 0,
-    hint = 0,
-  }
-  for _, diagnostic in ipairs(vim.diagnostic.get(vim.api.nvim_get_current_buf(), {
-    severity = { vim.diagnostic.severity.ERROR, vim.diagnostic.severity.WARN, vim.diagnostic.severity.INFO, vim.diagnostic.severity.HINT }
-  })) do
-    local severity = string.lower(vim.diagnostic.severity[diagnostic.severity])
-    counts[severity] = counts[severity] + 1
-  end
-  return string.format('E:%d W:%d I:%d H:%d', counts.error, counts.warn, counts.info, counts.hint)
-end
-
-vim.opt.statusline = "%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %F %{%v:lua.lsp_diagnostic_count()%}%< %=%{%v:lua.lsp_status()%}[bufno: %n]:%y[%l:%c of %L %p%%]"
+vim.opt.statusline = "%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %F%< %=[bufno: %n]:%y[%l:%c of %L %p%%]"
 
 local config_file = vim.fn.getcwd() .. '/.nvimconf.lua'
 local file = io.open(config_file, 'r')
@@ -160,55 +111,93 @@ if file then
   file:close()
 end
 
+if vim.g.neovide then
+  vim.o.guifont = "JetBrainsMonoNL Nerd Font:h10"
+end
 -- vim.opt.runtimepath:append("~/.config/nvim/custom_files/*")
 -- vim.cmd('luafile ' .. '~/.config/nvim/custom_files/custom_config.lua')
+
+local function fzf_file_finder()
+
+  local tempfile = os.getenv("TEMP") .. "/fzf_select_file"
+  vim.fn.delete(tempfile)
+
+  local buf = vim.api.nvim_create_buf(false, true)
+  local width = math.floor(vim.o.columns * 0.8)
+  local height = math.floor(vim.o.lines * 0.8)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = 'editor',
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = 'minimal',
+    border = 'rounded',
+  })
+
+  local cmd = string.format('fzf --preview="cat {}" --preview-window=right:50%% > %s', tempfile)
+  local term_job_id = vim.fn.termopen(cmd, {
+    on_exit = function(_, exit_code, _)
+      vim.schedule(function()
+        vim.api.nvim_win_close(win, true)
+        vim.api.nvim_buf_delete(buf, {force = true})
+        local file = vim.fn.readfile(tempfile)[1]
+        if file and file ~= '' then
+          vim.cmd('edit ' .. vim.fn.fnameescape(file))
+        end
+      end)
+    end,
+  })
+  vim.cmd('startinsert')
+end
+vim.api.nvim_create_user_command("FzfFiles", fzf_file_finder, {})
+vim.keymap.set('n', '<leader>ff', "<cmd>FzfFiles<CR>", { desc = 'Fuzzy find' })
+
+local function ranger_file_find()
+
+  local tempfile = os.getenv("TEMP") .. "/ranger_file_find"
+  vim.fn.delete(tempfile)
+
+  local buf = vim.api.nvim_create_buf(false, true)
+  local width = math.floor(vim.o.columns * 0.8)
+  local height = math.floor(vim.o.lines * 0.8)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = 'editor',
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = 'minimal',
+    border = 'rounded',
+  })
+
+  local cmd = string.format('ranger --choosefiles="%s"', tempfile)
+  local term_job_id = vim.fn.termopen(cmd, {
+    on_exit = function(_, exit_code, _)
+      vim.schedule(function()
+        vim.api.nvim_win_close(win, true)
+        vim.api.nvim_buf_delete(buf, {force = true})
+        if vim.fn.filereadable(tempfile) == 0 then
+          return
+        end
+        local file = vim.fn.readfile(tempfile)[1]
+        if file and file ~= '' then
+          vim.cmd('edit ' .. vim.fn.fnameescape(file))
+        end
+      end)
+    end,
+  })
+  vim.cmd('startinsert')
+end
+vim.api.nvim_create_user_command("RangerFile", ranger_file_find, {})
+vim.keymap.set('n', '<leader>r', "<cmd>RangerFile<CR>", { desc = 'Ranger file' })
 
 --[[
 This is plugin section
 ]]
-
-vim.api.nvim_create_autocmd('LspAttach', {
-  callback = function(args)
-    local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
-    if client ~= nil and client:supports_method('textDocument/completion') then
-      vim.lsp.completion.enable(true, client.id, args.buf, {autotrigger = true})
-    end
-  end,
-})
-
-vim.diagnostic.config({virtual_text = true})
-
-local mason_path = vim.fn.stdpath('data') .. '/mason/packages/'
-
-vim.lsp.config('luals', {
-  cmd = {mason_path .. 'lua-language-server/lua-language-server'},
-  filetypes = {'lua'},
-  settings = {
-    Lua = {
-      runtime = {
-        version = 'LuaJIT',
-      },
-      diagnostics = {
-        globals = { "vim" },
-      },
-      workspace = {
-        library = {
-          [vim.fn.expand "$VIMRUNTIME/lua"] = true,
-          [vim.fn.expand "$VIMRUNTIME/lua/vim"] = true,
-          [vim.fn.expand "$VIMRUNTIME/lua/vim/lsp"] = true,
-          [vim.fn.stdpath "data" .. "/lazy/lazy.nvim/lua/lazy"] = true,
-        },
-        maxPreload = 100000,
-        preloadFileSize = 10000,
-      },
-    },
-  },
-})
-vim.lsp.enable('luals')
-
-vim.lsp.config('clangd', {
-  cmd = {'clangd'},
-  single_file_support = true,
-  filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
-})
-vim.lsp.enable('clangd')

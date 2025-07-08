@@ -34,17 +34,15 @@ vim.keymap.set({'n', 'i'}, '<C-s>', '<cmd>write<cr>', {noremap = true, desc = 's
 vim.keymap.set('n', '<leader><C-n>', "<cmd>tabnew<cr>", { desc = 'new tab' })
 vim.keymap.set('n', '<tab>', "<cmd>bn<CR>", { desc = 'next buffer' })
 vim.keymap.set('n', '<S-tab>', '<cmd>bp<CR>', { desc = 'previous buffer' })
-vim.keymap.set('n', '<leader>bd', '<cmd>bd<CR>', {desc = 'Buffer delete'})
-vim.keymap.set('n', '<leader>fb', ':buffers<CR>:buffer ', {desc = 'Find buffers'})
+vim.keymap.set('n', '<leader>bd', ':buffers<CR>:bd! ', { desc = 'Buffer delete' })
+vim.keymap.set('n', '<leader>fb', ':buffers<CR>:buffer<space>', {desc = 'Find buffers'})
 vim.keymap.set('n', '<leader>fm', ':marks<CR>:normal \'', {desc = 'Find marks'})
 vim.keymap.set('n', '<a-up>', '<c-w>+', {desc = 'resize height increase'})
 vim.keymap.set('n', '<a-down>', '<c-w>-', {desc = 'resize height decrease'})
 vim.keymap.set('n', '<a-left>', '<c-w>>', {desc = 'resize width increase'})
 vim.keymap.set('n', '<a-right>', '<c-w><', {desc = 'resiez width decrease'})
--- vim.keymap.set('n', '<leader>fb', ':buffers<cr>:buffer<space>', { desc = 'Show buffers' })
 vim.keymap.set('n', "<leader>fg", "<cmd>grep -sw --vimgrep \"<cword>\"<cr>:cwindow<cr>", {desc = "Find word under cursor"})
 vim.keymap.set('n', "<leader>fw", ":grep ", {desc = "Grep it"})
--- vim.keymap.set('n', '<leader>m', ':marks<cr>:\'', { desc = 'Show marks' })
 vim.keymap.set('n', '<leader>v', ':registers<cr>:normal "p<left>', { desc = 'Show registers to paste' })
 vim.keymap.set('n', '<leader>ch', ':chistory<CR>:chistory ', { desc = 'Show quickfix history' })
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
@@ -63,6 +61,7 @@ vim.keymap.set('n', '<F2>', function()
     vim.cmd[[copen]]
   end
 end, {desc = "Toggle quickfix"})
+vim.keymap.set('n', '<leader>s', ":tabnew | r !", {desc = "open running task and showing output in new tab"})
 
 vim.o.background = "dark"
 vim.opt.termguicolors = true

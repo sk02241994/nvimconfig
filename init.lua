@@ -61,7 +61,7 @@ vim.keymap.set('n', '<F2>', function()
     vim.cmd[[copen]]
   end
 end, {desc = "Toggle quickfix"})
-vim.keymap.set('n', '<leader>s', ":tabnew | r !", {desc = "open running task and showing output in new tab"})
+vim.keymap.set('n', '<leader>s', ":vnew | r !", {desc = "open running task and showing output in new tab"})
 
 vim.o.background = "dark"
 vim.opt.termguicolors = true

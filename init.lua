@@ -17,6 +17,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.updatetime = 250
 vim.o.showtabline = 2
+vim.opt.path:append("**")
 vim.wo.signcolumn = 'yes'
 vim.o.termguicolors = true
 vim.opt.listchars = 'space:.,eol:$,tab:>>'
@@ -116,6 +117,7 @@ end
 -- vim.opt.runtimepath:append("~/.config/nvim/custom_files/*")
 -- vim.cmd('luafile ' .. '~/.config/nvim/custom_files/custom_config.lua')
 
+--[[
 local function fzf_file_finder()
 
   local tempfile = os.getenv("TEMP") .. "/fzf_select_file"
@@ -154,6 +156,7 @@ local function fzf_file_finder()
 end
 vim.api.nvim_create_user_command("FzfFiles", fzf_file_finder, {})
 vim.keymap.set('n', '<leader>ff', "<cmd>FzfFiles<CR>", { desc = 'Fuzzy find' })
+]]
 
 local function ranger_file_find()
 

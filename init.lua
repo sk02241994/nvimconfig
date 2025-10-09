@@ -200,6 +200,35 @@ end
 vim.api.nvim_create_user_command("RangerFile", ranger_file_find, {})
 vim.keymap.set('n', '<leader>r', "<cmd>RangerFile<CR>", { desc = 'Ranger file' })
 
+vim.api.nvim_create_user_command("RunInVSplit", function(opts)
+  local cmd = vim.fn.split(opts.args, " ")
+  vim.system(cmd, {text = true}, function(obj)
+    vim.schedule(function() 
+      local output = ""
+      if obj.stdout and obj.stdout ~= "" then
+        output = obj.stdout
+      elseif obj.stderr and obj.stderr ~= "" then
+        output = obj.stderr
+      end
+
+      local original_splitright = vim.o.splitright
+      vim.o.splitright = true
+      vim.cmd("vsplit")
+      vim.o.splitright = original_splitright
+
+      local buf = vim.api.nvim_create_buf(true, true)
+      local win = vim.api.nvim_get_current_win()
+      vim.api.nvim_win_set_buf(win, buf)
+      local lines = vim.split(output, "\n", {plain = true})
+      vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    end)
+  end)
+end, {
+nargs = "+",
+complete = "shellcmd",
+desc = "Run shell command in vertical split buffer"
+})
+
 --[[
 This is plugin section
 ]]

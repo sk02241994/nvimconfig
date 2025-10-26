@@ -37,6 +37,7 @@ vim.keymap.set('n', '<tab>', "<cmd>bn<CR>", { desc = 'next buffer' })
 vim.keymap.set('n', '<S-tab>', '<cmd>bp<CR>', { desc = 'previous buffer' })
 vim.keymap.set('n', '<leader>bd', ':buffers<CR>:bd! ', { desc = 'Buffer delete' })
 vim.keymap.set('n', '<leader>fb', ':buffers<CR>:buffer<space>', {desc = 'Find buffers'})
+vim.keymap.set('n', '<leader>ff', ':e ', {desc = 'Find file'})
 vim.keymap.set('n', '<leader>fm', ':marks<CR>:normal \'', {desc = 'Find marks'})
 vim.keymap.set('n', '<a-up>', '<c-w>+', {desc = 'resize height increase'})
 vim.keymap.set('n', '<a-down>', '<c-w>-', {desc = 'resize height decrease'})
@@ -62,7 +63,6 @@ vim.keymap.set('n', '<F2>', function()
     vim.cmd[[copen]]
   end
 end, {desc = "Toggle quickfix"})
-vim.keymap.set('n', '<leader>s', ":vnew | r !", {desc = "open running task and showing output in new tab"})
 
 vim.o.background = "dark"
 vim.opt.termguicolors = true
@@ -228,6 +228,7 @@ nargs = "+",
 complete = "shellcmd",
 desc = "Run shell command in vertical split buffer"
 })
+vim.keymap.set('n', '<leader>s', ":RunInVSplit ", {desc = "open running task and showing output in new tab"})
 
 --[[
 This is plugin section

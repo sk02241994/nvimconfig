@@ -77,12 +77,13 @@ return {
   cmd = function(dispatchers, config)
     local workspace_dir = get_jdtls_workspace_dir()
     local data_dir = workspace_dir
+    local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
 
     if config.root_dir then
       data_dir = data_dir .. '/' .. vim.fn.fnamemodify(config.root_dir, ':p:h:t')
     end
 
-    local config_cmd = { 'jdtls' }
+    local config_cmd = { 'jdtls', ".workspace_" .. project_name }
 
     return vim.lsp.rpc.start(config_cmd, dispatchers, {
       cwd = config.cmd_cwd,

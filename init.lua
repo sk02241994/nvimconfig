@@ -102,7 +102,7 @@ function get_git_branch()
   end
 end
 
-vim.opt.statusline = "%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %f%< %{%v:lua.vim.lsp.status()%} %=[bufno: %n]:%y[%l:%c of %L %p%%]"
+vim.opt.statusline = "%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %t%< %{%v:lua.vim.lsp.status()%} %=[bufno: %n]:%y[%l:%c of %L %p%%]"
 
 local config_file = vim.fn.getcwd() .. '/.nvimconf.lua'
 local file = io.open(config_file, 'r')

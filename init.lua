@@ -50,7 +50,7 @@ vim.keymap.set('n', '<leader>ch', ':chistory<CR>:chistory ', { desc = 'Show quic
 vim.keymap.set('n', '<F4>', "<cmd>cn<cr>", { desc = 'Quickfix next' })
 vim.keymap.set('n', '<F5>', "<cmd>cp<cr>", { desc = 'Quickfix previous' })
 vim.keymap.set('n', '<leader>e', ":Lex<cr>", { desc = 'Open explorer' })
-vim.keymap.set('n', '<F2>', function() 
+vim.keymap.set('n', '<F2>', function()
   local qf_exists = false
   for _, win in pairs(vim.fn.getwininfo()) do
     if win['quickfix'] == 1 then
@@ -102,7 +102,7 @@ function get_git_branch()
   end
 end
 
-vim.opt.statusline = "%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %F%< %=[bufno: %n]:%y[%l:%c of %L %p%%]"
+vim.opt.statusline = "%{%v:lua.get_mode()%} %{%v:lua.get_git_branch()%} %f%< %{%v:lua.vim.lsp.status()%} %=[bufno: %n]:%y[%l:%c of %L %p%%]"
 
 local config_file = vim.fn.getcwd() .. '/.nvimconf.lua'
 local file = io.open(config_file, 'r')
@@ -203,7 +203,7 @@ vim.keymap.set('n', '<leader>r', "<cmd>RangerFile<CR>", { desc = 'Ranger file' }
 vim.api.nvim_create_user_command("RunInVSplit", function(opts)
   local cmd = vim.fn.split(opts.args, " ")
   vim.system(cmd, {text = true}, function(obj)
-    vim.schedule(function() 
+    vim.schedule(function()
       local output = ""
       if obj.stdout and obj.stdout ~= "" then
         output = obj.stdout
@@ -229,6 +229,9 @@ complete = "shellcmd",
 desc = "Run shell command in vertical split buffer"
 })
 vim.keymap.set('n', '<leader>s', ":RunInVSplit ", {desc = "open running task and showing output in new tab"})
+
+vim.lsp.enable({"lua_ls", "clangd", "rust_analyzer", "jdtls", "pyright", "kotlin_lsp"})
+vim.diagnostic.config({virtual_text = true})
 
 --[[
 This is plugin section

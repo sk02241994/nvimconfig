@@ -1,0 +1,21 @@
+JDTLS_PATH="$LSP/jdtls"
+JDT_FILE=$(find $JDTLS_PATH -name org.eclipse.equinox.launcher_*.jar)
+LOMBOK=$(find $JDTLS_PATH -name lombok.jar)
+CONFIG_LINUX=$(find $JDTLS_PATH -name config_linux)
+
+java \
+  -javaagent:$LOMBOK \
+  -Declipse.application=org.eclipse.jdt.ls.core.id1 \
+  -Dosgi.bundles.defaultStartLevel=4 \
+  -Declipse.product=org.eclipse.jdt.ls.core.product \
+  -Dlog.protocol=true \
+  -Dosgi.checkConfiguration=true \
+  -Dlog.level=ALL \
+  -Xms1024m \
+  -Xmx3000m \
+  --add-modules=ALL-SYSTEM \
+  --add-opens java.base/java.util=ALL-UNNAMED \
+  --add-opens java.base/java.lang=ALL-UNNAMED \
+  -jar "$JDT_FILE" \
+  -configuration "$CONFIG_LINUX" \
+  -data $TEMP/$1

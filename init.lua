@@ -230,8 +230,8 @@ desc = "Run shell command in vertical split buffer"
 })
 vim.keymap.set('n', '<leader>s', ":RunInVSplit ", {desc = "open running task and showing output in new tab"})
 
-vim.lsp.enable({"lua_ls", "clangd", "rust_analyzer", "jdtls", "pyright", "kotlin_lsp"})
-vim.diagnostic.config({virtual_text = true})
+-- vim.lsp.enable({"lua_ls", "clangd", "rust_analyzer", "jdtls", "pyright", "kotlin_lsp"})
+-- vim.diagnostic.config({virtual_text = true})
 
 --[[
 This is plugin section
